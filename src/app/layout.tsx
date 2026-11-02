@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import ChromeHost from '@/components/chrome/ChromeHost';
 import Footer from '@/components/chrome/Footer';
+import AffiliatePageBanner from '@/components/affiliate/AffiliatePageBanner';
+import EditorialBanner from '@/components/cms/EditorialBanner';
 import { getAlerts, getBreakingHeadlines } from '@/lib/cms-client';
 import { siteConfig } from '@/lib/site-config';
 import { hasCapability } from '@/lib/capabilities';
@@ -80,6 +82,7 @@ gtag('config', 'G-1P66SZGVR3');`}
         </a>
         <ChromeHost headlines={headlines} alerts={alerts} />
         <main id="conteudo-principal" className="flex-1 min-w-0">
+          <AffiliatePageBanner><EditorialBanner /></AffiliatePageBanner>
           {children}
         </main>
         <Footer />

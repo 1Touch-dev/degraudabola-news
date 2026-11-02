@@ -1,3 +1,4 @@
+import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAlerts } from '@/lib/cms-client';
@@ -23,7 +24,7 @@ export default async function AlertasPage() {
       <p className="mt-2 text-sm text-muted">
         Lista demonstrativa — em produção, o CMS alimenta estes alertas por site.
       </p>
-      <ul className="mt-8 divide-y divide-black/10 border-y border-black/10">
+      <AffiliateFeed className="mt-8 divide-y divide-black/10 border-y border-black/10" as="ul" mode="list">
         {alerts.map((alert) => (
           <li key={alert.id} className="py-4">
             <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
@@ -39,7 +40,7 @@ export default async function AlertasPage() {
             <p className="mt-1 text-xs text-muted">{formatDatePtBr(alert.publishedAt)}</p>
           </li>
         ))}
-      </ul>
+      </AffiliateFeed>
     </div>
   );
 }

@@ -1,5 +1,12 @@
 'use client';
 
+import AffiliateSections from '@/components/affiliate/AffiliateSections';
+
+
+import AffiliateBanner from '@/components/affiliate/AffiliateBanner';
+import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
+
+
 import Link from 'next/link';
 import type React from 'react';
 import ArticleCard from '@/components/cards/ArticleCard';
@@ -305,7 +312,7 @@ function CategoryRail({ articles }: { articles: Article[] }) {
           </Link>
         )}
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <AffiliateFeed className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" mode="grid">
         {articles.map((article) => (
           <ArticleCard
             key={article.id}
@@ -313,7 +320,7 @@ function CategoryRail({ articles }: { articles: Article[] }) {
             variant={resolveCardVariant(siteConfig.components.standardCard.variant)}
           />
         ))}
-      </div>
+      </AffiliateFeed>
     </section>
   );
 }
@@ -324,24 +331,24 @@ function HorizontalStream({ articles }: { articles: Article[] }) {
       <h2 className="mb-3 border-b-2 border-primary pb-1 font-display text-xl uppercase tracking-wide text-secondary">
         Últimas
       </h2>
-      <div className="divide-y divide-black/10 rounded border border-black/10 bg-white">
+      <AffiliateFeed className="divide-y divide-black/10 rounded border border-black/10 bg-white" mode="list">
         {articles.map((article) => (
           <div key={article.id} className="px-3">
             <ArticleCard article={article} variant="horizontal" />
           </div>
         ))}
-      </div>
+      </AffiliateFeed>
     </section>
   );
 }
 
 function CompactGrid({ articles }: { articles: Article[] }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <AffiliateFeed className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" mode="grid">
       {articles.map((article) => (
         <ArticleCard key={article.id} article={article} variant="compact" />
       ))}
-    </div>
+    </AffiliateFeed>
   );
 }
 
@@ -367,11 +374,11 @@ function VisualMosaicGrid({ articles }: { articles: Article[] }) {
         )}
       </div>
       {rest.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <AffiliateFeed className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" mode="grid">
           {rest.map((article) => (
             <ArticleCard key={article.id} article={article} variant="compact" />
           ))}
-        </div>
+        </AffiliateFeed>
       )}
     </div>
   );
@@ -611,11 +618,11 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
   if (useMagazineShell) {
     return (
       <div className="mx-auto max-w-3xl space-y-10 px-4 py-12 md:py-16">
-        {recipe.slots.map((slot) => (
+        <AffiliateSections enabled={articles.length >= 6}>{recipe.slots.map((slot) => (
           <MotionSection key={slot.id}>
             {renderBlock(slot, articles, mostRead, cursor)}
           </MotionSection>
-        ))}
+        ))}</AffiliateSections>
       </div>
     );
   }
@@ -628,7 +635,7 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
         <div className="mx-auto max-w-7xl space-y-4 px-4 py-6">
           <div className="grid gap-4 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-8">
-              {main.map((slot) => (
+              <AffiliateSections enabled={articles.length >= 6}>{main.map((slot) => (
                 <MotionSection
                   key={slot.id}
                   className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-card"
@@ -637,9 +644,10 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
                     {renderBlock(slot, articles, mostRead, cursor)}
                   </div>
                 </MotionSection>
-              ))}
+              ))}</AffiliateSections>
             </div>
             <aside className="space-y-4 lg:col-span-4">
+              {articles.length >= 6 && <AffiliateBanner preset="card" />}
               {side.map((slot) => (
                 <MotionSection
                   key={slot.id}
@@ -664,13 +672,14 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
       <div className={shellClass(recipe)}>
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="space-y-4">
-            {main.map((slot) => (
+            <AffiliateSections enabled={articles.length >= 6}>{main.map((slot) => (
               <MotionSection key={slot.id}>
                 {renderBlock(slot, articles, mostRead, cursor)}
               </MotionSection>
-            ))}
+            ))}</AffiliateSections>
           </div>
           <aside className="space-y-4">
+            {articles.length >= 6 && <AffiliateBanner preset="card" />}
             {side.map((slot) => (
               <MotionSection key={slot.id}>
                 {renderBlock(slot, articles, mostRead, cursor)}
@@ -684,11 +693,11 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
 
   return (
     <div className={shellClass(recipe)}>
-      {recipe.slots.map((slot) => (
+      <AffiliateSections enabled={articles.length >= 6}>{recipe.slots.map((slot) => (
         <MotionSection key={slot.id}>
           {renderBlock(slot, articles, mostRead, cursor)}
         </MotionSection>
-      ))}
+      ))}</AffiliateSections>
     </div>
   );
 }

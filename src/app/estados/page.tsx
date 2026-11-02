@@ -1,3 +1,4 @@
+import AffiliateSections from '@/components/affiliate/AffiliateSections';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getBrazilianStates } from '@/lib/cms-client';
@@ -25,7 +26,7 @@ export default async function EstadosPage() {
         Diretório nacional (27 UFs). Cada página de estado lista matérias remapeadas para demo.
       </p>
       <div className="mt-10 space-y-10">
-        {Object.entries(byRegion).map(([region, list]) => (
+        <AffiliateSections enabled={true}>{Object.entries(byRegion).map(([region, list]) => (
           <section key={region}>
             <h2 className="font-display text-sm uppercase tracking-[0.18em] text-secondary">
               {region}
@@ -44,7 +45,7 @@ export default async function EstadosPage() {
               ))}
             </ul>
           </section>
-        ))}
+        ))}</AffiliateSections>
       </div>
     </div>
   );

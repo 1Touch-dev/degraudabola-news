@@ -1,3 +1,4 @@
+import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/cards/ArticleCard';
 import { getLatestArticles } from '@/lib/cms-client';
@@ -19,13 +20,13 @@ export default async function NewsPage() {
         </h1>
         <p className="mt-1 text-sm text-muted">Cobertura completa em tempo real</p>
       </header>
-      <div className="divide-y divide-black/10 rounded border border-black/10 bg-white">
+      <AffiliateFeed className="divide-y divide-black/10 rounded border border-black/10 bg-white" mode="list">
         {articles.map((article) => (
           <div key={article.id} className="px-4">
             <ArticleCard article={article} variant="horizontal" />
           </div>
         ))}
-      </div>
+      </AffiliateFeed>
     </div>
   );
 }

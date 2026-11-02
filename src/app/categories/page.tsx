@@ -1,3 +1,4 @@
+import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCategories } from '@/lib/cms-client';
@@ -26,7 +27,7 @@ export default async function CategoriesPage() {
             Explore as seções editoriais de {siteConfig.siteName}.
           </p>
         </header>
-        <div className="divide-y divide-black/10">
+        <AffiliateFeed className="divide-y divide-black/10" as="div" mode="list">
           {categories.map((cat) => (
             <Link
               key={cat.id}
@@ -43,7 +44,7 @@ export default async function CategoriesPage() {
               )}
             </Link>
           ))}
-        </div>
+        </AffiliateFeed>
       </div>
     );
   }
@@ -57,7 +58,7 @@ export default async function CategoriesPage() {
           </h1>
           <span className="text-xs text-muted">{categories.length} seções</span>
         </header>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <AffiliateFeed className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" as="div" mode="grid">
           {categories.map((cat, i) => (
             <Link
               key={cat.id}
@@ -75,7 +76,7 @@ export default async function CategoriesPage() {
               </div>
             </Link>
           ))}
-        </div>
+        </AffiliateFeed>
       </div>
     );
   }
@@ -88,7 +89,7 @@ export default async function CategoriesPage() {
           Categorias
         </h1>
       </header>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <AffiliateFeed className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" as="div" mode="grid">
         {categories.map((cat) => (
           <Link
             key={cat.id}
@@ -103,7 +104,7 @@ export default async function CategoriesPage() {
             )}
           </Link>
         ))}
-      </div>
+      </AffiliateFeed>
     </div>
   );
 }

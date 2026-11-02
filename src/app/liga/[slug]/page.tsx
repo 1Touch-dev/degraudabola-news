@@ -1,3 +1,4 @@
+import AffiliateBanner from '@/components/affiliate/AffiliateBanner';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import MatchCard from '@/components/football/MatchCard';
@@ -62,12 +63,20 @@ export default async function LigaPage({ params }: PageProps) {
         </section>
       ) : null}
 
+      {standings.length > 0 && scorers.length > 0 && (
+        <AffiliateBanner preset="landscape" />
+      )}
+
       <section className="space-y-3">
         <h2 className="font-display text-2xl uppercase tracking-wide text-secondary">
           Artilharia
         </h2>
         <ScorersList rows={scorers} />
       </section>
+
+      {scorers.length >= 6 && upcoming.length > 0 && (
+        <AffiliateBanner preset="strip" />
+      )}
 
       <section className="space-y-3">
         <h2 className="font-display text-2xl uppercase tracking-wide text-secondary">

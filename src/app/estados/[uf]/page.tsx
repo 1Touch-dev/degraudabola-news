@@ -1,3 +1,4 @@
+import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ArticleCard from '@/components/cards/ArticleCard';
@@ -40,11 +41,11 @@ export default async function EstadoUfPage({ params }: PageProps) {
       <p className="mt-2 text-sm text-muted">
         Região {state.region} · cobertura demonstrativa em {siteConfig.siteName}
       </p>
-      <div className="mt-8 space-y-3">
+      <AffiliateFeed className="mt-8 space-y-3" mode="list">
         {articles.map((article) => (
           <ArticleCard key={article.id} article={article} variant="horizontal" />
         ))}
-      </div>
+      </AffiliateFeed>
     </div>
   );
 }

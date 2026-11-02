@@ -1,3 +1,4 @@
+import ArticleAffiliateBody from '@/components/affiliate/ArticleAffiliateBody';
 import Image from 'next/image';
 import Link from 'next/link';
 import ArticleCard from '@/components/cards/ArticleCard';
@@ -122,7 +123,7 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
           </div>
         </div>
       )}
-      <div className="mx-auto min-w-0 max-w-3xl px-4 py-8 md:py-10">
+      <div className="mx-auto min-w-0 max-w-6xl article-content-shell px-4 py-8 md:py-10">
         {article.imageUrl ? (
           <header className="mb-6 md:hidden">
             <MetaBadges article={article} />
@@ -154,9 +155,9 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
           <Byline article={article} />
         </div>
         <KeyPointsBlock article={article} inverted />
-        <div
-          className="prose prose-invert mt-8 max-w-none break-words font-body text-base leading-[1.7] prose-headings:font-display prose-headings:uppercase prose-a:text-accent prose-img:h-auto prose-img:max-w-full [&_iframe]:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+        <ArticleAffiliateBody
+          className="prose prose-invert  max-w-none break-words font-body text-base leading-[1.7] prose-headings:font-display prose-headings:uppercase prose-a:text-accent prose-img:h-auto prose-img:max-w-full [&_iframe]:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
+          html={article.content}
         />
         <ArticleSentiment articleId={article.id} slug={article.slug} tone="dark" />
         <div className="[&_h2]:text-white [&_h3]:text-white [&_.text-muted]:text-white/50 [&_.text-foreground]:text-white [&_.text-primary]:text-accent [&_.border-black\\/10]:border-white/10">
@@ -171,7 +172,7 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
 function LongformFocused({ article, related }: ArticleLayoutProps) {
   return (
     <article className="bg-[#FAFAF8]">
-      <div className="mx-auto max-w-[40rem] px-5 py-12 md:py-20">
+      <div className="mx-auto max-w-6xl article-content-shell px-5 py-12 md:py-20">
         <div className="text-center [&_.text-muted]:text-muted">
           <Breadcrumb article={article} />
         </div>
@@ -209,9 +210,9 @@ function LongformFocused({ article, related }: ArticleLayoutProps) {
           </figure>
         )}
 
-        <div
-          className="prose prose-lg prose-neutral mt-12 max-w-none font-article leading-[1.85] prose-headings:font-display prose-headings:tracking-[-0.01em] prose-p:text-secondary/90 prose-a:text-primary"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+        <ArticleAffiliateBody
+          className="prose prose-lg prose-neutral  max-w-none font-article leading-[1.85] prose-headings:font-display prose-headings:tracking-[-0.01em] prose-p:text-secondary/90 prose-a:text-primary"
+          html={article.content}
         />
         <ArticleSentiment articleId={article.id} slug={article.slug} />
         <RelatedBlock related={related} variant="compact" />
@@ -251,10 +252,10 @@ function SplitRailStory({ article, related }: ArticleLayoutProps) {
             </div>
           )}
 
-          <div
-            className="prose prose-neutral mt-8 max-w-none font-article leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
+          <ArticleAffiliateBody
+          className="prose prose-neutral  max-w-none font-article leading-relaxed"
+          html={article.content}
+        />
           <ArticleSentiment articleId={article.id} slug={article.slug} />
         </article>
 
@@ -294,10 +295,10 @@ function InterviewFocus({ article, related }: ArticleLayoutProps) {
             “{article.excerpt}”
           </blockquote>
           <Byline article={article} />
-          <div
-            className="prose prose-neutral mt-8 max-w-none font-article"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
+          <ArticleAffiliateBody
+          className="prose prose-neutral  max-w-none font-article"
+          html={article.content}
+        />
         </div>
         <aside className="space-y-4">
           {article.imageUrl && (
@@ -342,10 +343,10 @@ function GalleryLead({ article, related }: ArticleLayoutProps) {
           <Byline article={article} />
         </div>
       </div>
-      <div className="mx-auto max-w-3xl px-4 py-8">
-        <div
+      <div className="mx-auto max-w-6xl article-content-shell px-4 py-8">
+        <ArticleAffiliateBody
           className="prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+          html={article.content}
         />
         <ArticleSentiment articleId={article.id} slug={article.slug} />
         <RelatedBlock related={related} variant="compact" />
@@ -356,7 +357,7 @@ function GalleryLead({ article, related }: ArticleLayoutProps) {
 
 function OpinionColumn({ article, related }: ArticleLayoutProps) {
   return (
-    <article className="mx-auto max-w-2xl px-4 py-12">
+    <article className="mx-auto max-w-6xl article-content-shell px-4 py-12">
       <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary">Opinião</p>
       <h1 className="mt-4 font-display text-4xl leading-[1.1] text-secondary md:text-5xl">
         {article.title}
@@ -365,10 +366,10 @@ function OpinionColumn({ article, related }: ArticleLayoutProps) {
       {article.excerpt && (
         <p className="mt-6 text-xl leading-relaxed text-muted-text">{article.excerpt}</p>
       )}
-      <div
-        className="prose prose-lg mt-10 max-w-none font-body"
-        dangerouslySetInnerHTML={{ __html: article.content }}
-      />
+      <ArticleAffiliateBody
+          className="prose prose-lg  max-w-none font-body"
+          html={article.content}
+        />
       <ArticleSentiment articleId={article.id} slug={article.slug} />
       <RelatedBlock related={related} variant="horizontal" />
     </article>

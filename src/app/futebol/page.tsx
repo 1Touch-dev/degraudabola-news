@@ -1,3 +1,4 @@
+import AffiliateSections from '@/components/affiliate/AffiliateSections';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import MatchCard from '@/components/football/MatchCard';
@@ -59,7 +60,7 @@ export default async function FutebolHubPage() {
         )}
       </section>
 
-      {groups.map(({ competition, upcoming }) => (
+      <AffiliateSections enabled={groups.some((group) => group.upcoming.length > 0)}>{groups.map(({ competition, upcoming }) => (
         <section key={competition.slug} className="space-y-4">
           <div className="flex items-end justify-between gap-4">
             <h2 className="font-display text-2xl uppercase tracking-wide text-secondary">
@@ -82,7 +83,7 @@ export default async function FutebolHubPage() {
             </div>
           )}
         </section>
-      ))}
+      ))}</AffiliateSections>
     </div>
   );
 }

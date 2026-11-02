@@ -1,3 +1,4 @@
+import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLiveStoryBySlug } from '@/lib/cms-client';
@@ -39,7 +40,7 @@ export default async function AoVivoPage({ params }: PageProps) {
         Última atualização: {formatDatePtBr(story.updatedAt)}
       </p>
 
-      <ol className="mt-10 space-y-0 border-l-2 border-primary/40">
+      <AffiliateFeed className="mt-10 space-y-0 border-l-2 border-primary/40" as="ol" mode="list">
         {story.updates.map((update) => (
           <li key={update.id} id={update.id} className="relative scroll-mt-28 py-5 pl-6">
             <span className="absolute -left-[5px] top-7 h-2.5 w-2.5 rounded-full bg-primary" />
@@ -54,7 +55,7 @@ export default async function AoVivoPage({ params }: PageProps) {
             </Link>
           </li>
         ))}
-      </ol>
+      </AffiliateFeed>
 
       <p className="mt-8 text-xs text-muted">
         Demo de {siteConfig.siteName}. Em produção, atualizações vêm do CMS.
