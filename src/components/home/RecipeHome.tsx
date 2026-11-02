@@ -19,10 +19,63 @@ import {
 import { siteConfig, type HomepageRecipe, type RecipeSlot } from '@/lib/site-config';
 import ScoreboardStrip from '@/components/football/ScoreboardStrip';
 import { getCompetitions, isSportsSite, navHrefForSlug } from '@/lib/competitions';
+import FallbackMedia from '@/components/ui/FallbackMedia';
 
 interface RecipeHomeProps {
   articles: Article[];
   mostRead: Article[];
+}
+
+function TopBriefBar({ articles }: { articles: Article[] }) {
+  const items = articles.slice(0, 4);
+  const quickSearches = ['Série B', 'Tabela', 'Partidas', 'Transferências', 'Clubes'];
+  if (!items.length) return null;
+
+  return (
+    <section className="overflow-hidden rounded-[22px] border border-black/10 bg-[linear-gradient(135deg,rgba(11,61,46,0.98)_0%,rgba(22,101,52,0.96)_100%)] text-white shadow-[0_18px_45px_rgba(11,61,46,0.22)]">
+      <div className="flex flex-col gap-4 p-4 md:p-5">
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-emerald-200">Panorama do dia</p>
+            <h2 className="mt-1 font-display text-xl uppercase tracking-wide">Destaques do acesso</h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/busca"
+              className="inline-flex min-h-10 items-center rounded-full border border-white/15 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-white hover:bg-white hover:text-[#0B3D2E]"
+            >
+              Buscar notícias
+            </Link>
+            <Link
+              href="/news"
+              className="inline-flex min-h-10 items-center rounded-full bg-white px-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#0B3D2E] hover:bg-emerald-50"
+            >
+              Ver cobertura
+            </Link>
+          </div>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {items.map((article, index) => (
+            <Link
+              key={article.id}
+              href={`/artigo/${article.slug}`}
+              className="rounded-[18px] border border-white/10 bg-white/5 p-4 transition hover:-translate-y-0.5 hover:bg-white/10"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200">
+                0{index + 1} · {article.category}
+              </p>
+              <h3 className="mt-2 line-clamp-3 font-heading text-sm font-semibold leading-snug text-white md:text-base">
+                {article.title}
+              </h3>
+              <p className="mt-3 text-[10px] uppercase tracking-[0.16em] text-white/70">
+                {article.author}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function take(
@@ -46,13 +99,19 @@ function take(
 }
 
 function HeroLead({ articles }: { articles: Article[] }) {
-  const a = articles[0];
+  const [a, b, c] = articles;
   if (!a) return null;
   return (
-    <ArticleCard
-      article={a}
-      variant={resolveFeaturedCardVariant(siteConfig.components.featuredCard.variant)}
-    />
+    <section className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.9fr)]">
+      <ArticleCard
+        article={a}
+        variant={resolveFeaturedCardVariant(siteConfig.components.featuredCard.variant)}
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        {b ? <ArticleCard article={b} variant="horizontal" className="h-full" /> : null}
+        {c ? <ArticleCard article={c} variant="horizontal" className="h-full" /> : null}
+      </div>
+    </section>
   );
 }
 
@@ -73,12 +132,13 @@ function HeroSplit({ articles }: { articles: Article[] }) {
         )}
       </div>
       <div className="relative min-h-[220px] bg-black/5">
-        {a.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={a.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs uppercase text-muted-text">Sem imagem</div>
-        )}
+        <FallbackMedia
+          src={a.imageUrl}
+          alt=""
+          fill
+          className="absolute inset-0 h-full w-full object-cover"
+          fallbackClassName="absolute inset-0"
+        />
       </div>
     </section>
   );
@@ -92,10 +152,13 @@ function HeroOverlay({ articles }: { articles: Article[] }) {
       href={`/artigo/${a.slug}`}
       className="relative block min-h-[320px] overflow-hidden rounded-lg bg-secondary md:min-h-[420px]"
     >
-      {a.imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={a.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" />
-      )}
+      <FallbackMedia
+        src={a.imageUrl}
+        alt=""
+        fill
+        className="absolute inset-0 h-full w-full object-cover opacity-70"
+        fallbackClassName="absolute inset-0"
+      />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       <div className="absolute bottom-0 p-6 text-white md:p-10">
         <p className="text-xs font-bold uppercase tracking-widest text-accent">{a.category || 'Capa'}</p>
@@ -133,11 +196,14 @@ function HeroCompact({ articles }: { articles: Article[] }) {
       href={`/artigo/${a.slug}`}
       className="flex items-center gap-4 rounded border border-black/10 bg-surface px-4 py-3 hover:border-primary/40"
     >
-      <div className="h-16 w-24 shrink-0 overflow-hidden rounded bg-black/5">
-        {a.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={a.imageUrl} alt="" className="h-full w-full object-cover" />
-        )}
+      <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded bg-black/5">
+        <FallbackMedia
+          src={a.imageUrl}
+          alt=""
+          fill
+          className="h-full w-full object-cover"
+          fallbackClassName="absolute inset-0"
+        />
       </div>
       <div className="min-w-0">
         <p className="text-[10px] font-bold uppercase tracking-wider text-primary">{a.category}</p>
@@ -211,10 +277,13 @@ function HeroMagazine({ articles }: { articles: Article[] }) {
   if (!a) return null;
   return (
     <Link href={`/artigo/${a.slug}`} className="group relative block aspect-[16/10] overflow-hidden rounded-xl bg-secondary">
-      {a.imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={a.imageUrl} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-      )}
+      <FallbackMedia
+        src={a.imageUrl}
+        alt=""
+        fill
+        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        fallbackClassName="absolute inset-0"
+      />
       <div className="absolute inset-0 bg-black/35" />
       <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
         <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent">Capa</p>
@@ -253,10 +322,13 @@ function HeroCoverDuo({ articles }: { articles: Article[] }) {
   return (
     <div className="grid gap-3 md:grid-cols-2">
       <Link href={`/artigo/${a.slug}`} className="group relative min-h-[280px] overflow-hidden rounded-xl bg-secondary">
-        {a.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={a.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105" />
-        )}
+        <FallbackMedia
+          src={a.imageUrl}
+          alt=""
+          fill
+          className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
+          fallbackClassName="absolute inset-0"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
         <div className="absolute bottom-0 p-5 text-white">
           <p className="text-[10px] font-bold uppercase tracking-widest text-accent">{a.category}</p>
@@ -265,10 +337,13 @@ function HeroCoverDuo({ articles }: { articles: Article[] }) {
       </Link>
       {b ? (
         <Link href={`/artigo/${b.slug}`} className="group relative min-h-[280px] overflow-hidden rounded-xl bg-secondary">
-          {b.imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={b.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105" />
-          )}
+          <FallbackMedia
+            src={b.imageUrl}
+            alt=""
+            fill
+            className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
+            fallbackClassName="absolute inset-0"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
           <div className="absolute bottom-0 p-5 text-white">
             <p className="text-[10px] font-bold uppercase tracking-widest text-accent">{b.category}</p>
@@ -328,12 +403,25 @@ function CategoryRail({ articles }: { articles: Article[] }) {
 function HorizontalStream({ articles }: { articles: Article[] }) {
   return (
     <section>
+<<<<<<< HEAD
       <h2 className="mb-3 border-b-2 border-primary pb-1 font-display text-xl uppercase tracking-wide text-secondary">
         Últimas
       </h2>
       <AffiliateFeed className="divide-y divide-black/10 rounded border border-black/10 bg-white" mode="list">
+=======
+      <div className="mb-4 flex items-center justify-between gap-3 border-b border-black/5 pb-3">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Cobertura</p>
+          <h2 className="mt-1 font-display text-xl uppercase tracking-wide text-secondary">Últimas</h2>
+        </div>
+        <Link href="/news" className="text-xs font-semibold uppercase tracking-[0.18em] text-primary hover:underline">
+          Ver tudo
+        </Link>
+      </div>
+      <div className="space-y-3">
+>>>>>>> 00ade39 (Improve loading states and shared UI components)
         {articles.map((article) => (
-          <div key={article.id} className="px-3">
+          <div key={article.id}>
             <ArticleCard article={article} variant="horizontal" />
           </div>
         ))}
@@ -398,26 +486,35 @@ function DiscoveryChips() {
         href: navHrefForSlug(cat.slug),
       }));
   return (
-    <div className="flex flex-wrap gap-2">
-      {chips.map((chip) => (
-        <Link
-          key={chip.href}
-          href={chip.href}
-          className="rounded-full border border-black/10 bg-surface px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-secondary hover:border-primary hover:text-primary"
-        >
-          {chip.name}
-        </Link>
-      ))}
+    <div>
+      <div className="mb-4 flex items-center justify-between gap-3 border-b border-black/5 pb-3">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Navegação</p>
+          <h2 className="mt-1 font-heading text-lg text-secondary">Explore rapidamente</h2>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2.5">
+        {chips.map((chip) => (
+          <Link
+            key={chip.href}
+            href={chip.href}
+            className="rounded-full border border-black/10 bg-surface px-4 py-2 text-xs font-bold uppercase tracking-wide text-secondary shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+          >
+            {chip.name}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
 
 function MostReadPanel({ articles }: { articles: Article[] }) {
   return (
-    <div className="rounded border border-black/10 bg-surface p-4">
-      <h2 className="mb-3 font-display text-lg uppercase tracking-wide text-primary">
-        Mais lidas
-      </h2>
+    <div className="rounded-[20px] bg-gradient-to-br from-white via-white to-slate-50 p-4 md:p-5">
+      <div className="mb-4 border-b border-black/5 pb-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Audiência</p>
+        <h2 className="mt-1 font-display text-lg uppercase tracking-wide text-primary">Mais lidas</h2>
+      </div>
       {articles.map((article, i) => (
         <ArticleCard key={article.id} article={article} variant="rail" rank={i + 1} />
       ))}
@@ -585,14 +682,60 @@ function renderBlock(
 function shellClass(recipe: HomepageRecipe): string {
   switch (recipe.grid) {
     case 'mosaic-12':
-      return 'mx-auto max-w-7xl space-y-6 px-4 py-6';
+      return 'mx-auto max-w-7xl space-y-6 px-4 py-6 md:py-8';
     case 'scoreboard-split':
-      return 'mx-auto max-w-7xl space-y-4 px-4 py-4';
+      return 'mx-auto max-w-7xl space-y-5 px-4 py-5 md:py-8';
     case 'main-sidebar':
-      return 'mx-auto max-w-7xl px-4 py-4';
+      return 'mx-auto max-w-7xl space-y-5 px-4 py-5 md:py-8';
     default:
       return 'mx-auto max-w-6xl space-y-6 px-4 py-8';
   }
+}
+
+function sectionChromeClass(slot: RecipeSlot, featured = false): string {
+  const isUtility = slot.kind === 'scoreboard' || slot.kind === 'discovery-chips';
+  const isHero = slot.kind === 'hero';
+
+  if (isHero) {
+    return [
+      'overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]',
+      featured ? 'ring-1 ring-primary/15' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  if (isUtility) {
+    return 'overflow-hidden rounded-[20px] border border-black/10 bg-white/95 shadow-card';
+  }
+
+  return [
+    'overflow-hidden rounded-[22px] border border-black/10 bg-white shadow-card transition-shadow duration-200',
+    'hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]',
+    featured ? 'ring-1 ring-primary/10' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function sectionInnerClass(slot: RecipeSlot): string {
+  if (slot.kind === 'hero') return 'p-0';
+  if (slot.kind === 'scoreboard') return 'p-3 md:p-4';
+  return 'p-4 md:p-5';
+}
+
+function renderSlotCard(
+  slot: RecipeSlot,
+  articles: Article[],
+  mostRead: Article[],
+  cursor: { n: number },
+  featured = false
+) {
+  return (
+    <MotionSection key={slot.id} className={sectionChromeClass(slot, featured)}>
+      <div className={sectionInnerClass(slot)}>{renderBlock(slot, articles, mostRead, cursor)}</div>
+    </MotionSection>
+  );
 }
 
 /**
@@ -618,11 +761,16 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
   if (useMagazineShell) {
     return (
       <div className="mx-auto max-w-3xl space-y-10 px-4 py-12 md:py-16">
+<<<<<<< HEAD
         <AffiliateSections enabled={articles.length >= 6}>{recipe.slots.map((slot) => (
           <MotionSection key={slot.id}>
             {renderBlock(slot, articles, mostRead, cursor)}
           </MotionSection>
         ))}</AffiliateSections>
+=======
+        <TopBriefBar articles={articles} />
+        {recipe.slots.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+>>>>>>> 00ade39 (Improve loading states and shared UI components)
       </div>
     );
   }
@@ -633,31 +781,16 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
     return (
       <div className="bg-surface/80">
         <div className="mx-auto max-w-7xl space-y-4 px-4 py-6">
+          <TopBriefBar articles={articles} />
           <div className="grid gap-4 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-8">
-              <AffiliateSections enabled={articles.length >= 6}>{main.map((slot) => (
-                <MotionSection
-                  key={slot.id}
-                  className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-card"
-                >
-                  <div className="p-4">
-                    {renderBlock(slot, articles, mostRead, cursor)}
-                  </div>
-                </MotionSection>
-              ))}</AffiliateSections>
+              <AffiliateSections enabled={articles.length >= 6}>
+                {main.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+              </AffiliateSections>
             </div>
             <aside className="space-y-4 lg:col-span-4">
               {articles.length >= 6 && <AffiliateBanner preset="card" />}
-              {side.map((slot) => (
-                <MotionSection
-                  key={slot.id}
-                  className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-card"
-                >
-                  <div className="p-4">
-                    {renderBlock(slot, articles, mostRead, cursor)}
-                  </div>
-                </MotionSection>
-              ))}
+              {side.map((slot) => renderSlotCard(slot, articles, mostRead, cursor))}
             </aside>
           </div>
         </div>
@@ -670,21 +803,16 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
     const side = recipe.slots.filter((s) => sidebarKinds.has(s.kind));
     return (
       <div className={shellClass(recipe)}>
-        <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
+        <TopBriefBar articles={articles} />
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
           <div className="space-y-4">
-            <AffiliateSections enabled={articles.length >= 6}>{main.map((slot) => (
-              <MotionSection key={slot.id}>
-                {renderBlock(slot, articles, mostRead, cursor)}
-              </MotionSection>
-            ))}</AffiliateSections>
+            <AffiliateSections enabled={articles.length >= 6}>
+              {main.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+            </AffiliateSections>
           </div>
-          <aside className="space-y-4">
+          <aside className="space-y-4 lg:sticky lg:top-4">
             {articles.length >= 6 && <AffiliateBanner preset="card" />}
-            {side.map((slot) => (
-              <MotionSection key={slot.id}>
-                {renderBlock(slot, articles, mostRead, cursor)}
-              </MotionSection>
-            ))}
+            {side.map((slot) => renderSlotCard(slot, articles, mostRead, cursor))}
           </aside>
         </div>
       </div>
@@ -693,11 +821,10 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
 
   return (
     <div className={shellClass(recipe)}>
-      <AffiliateSections enabled={articles.length >= 6}>{recipe.slots.map((slot) => (
-        <MotionSection key={slot.id}>
-          {renderBlock(slot, articles, mostRead, cursor)}
-        </MotionSection>
-      ))}</AffiliateSections>
+      <TopBriefBar articles={articles} />
+      <AffiliateSections enabled={articles.length >= 6}>
+        {recipe.slots.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+      </AffiliateSections>
     </div>
   );
 }

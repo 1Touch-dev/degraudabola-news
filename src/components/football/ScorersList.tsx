@@ -1,4 +1,32 @@
+'use client';
+
+import { useState } from 'react';
 import type { ScorerRow } from '@/lib/football-client';
+
+function TeamLogoBadge({ team, logo }: { team?: string; logo?: string }) {
+  const [failed, setFailed] = useState(false);
+  const short = (team || 'Clube').replace(/[^A-Za-zÀ-ÿ]/g, '').slice(0, 3).toUpperCase();
+
+  if (!logo || failed) {
+    return (
+      <span className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-primary/10 text-[8px] font-bold uppercase text-primary">
+        {short}
+      </span>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={logo}
+      alt=""
+      width={22}
+      height={22}
+      className="h-[22px] w-[22px] object-contain"
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export default function ScorersList({ rows }: { rows: ScorerRow[] }) {
   if (rows.length === 0) {
@@ -19,16 +47,7 @@ export default function ScorersList({ rows }: { rows: ScorerRow[] }) {
           <span className="w-6 text-right text-xs tabular-nums text-muted">
             {row.rank}
           </span>
-          {row.teamLogo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={row.teamLogo}
-              alt=""
-              width={22}
-              height={22}
-              className="h-[22px] w-[22px] object-contain"
-            />
-          ) : null}
+          <TeamLogoBadge team={row.team} logo={row.teamLogo} />
           <span className="min-w-0 flex-1">
             <span className="block truncate font-semibold text-secondary">
               {row.name}

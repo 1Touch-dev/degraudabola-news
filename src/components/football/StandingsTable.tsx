@@ -1,4 +1,32 @@
+'use client';
+
+import { useState } from 'react';
 import type { StandingRow } from '@/lib/football-client';
+
+function TeamBadge({ name, logo }: { name: string; logo?: string }) {
+  const [failed, setFailed] = useState(false);
+  const short = name.replace(/[^A-Za-zÀ-ÿ]/g, '').slice(0, 3).toUpperCase();
+
+  if (!logo || failed) {
+    return (
+      <span className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-primary/10 text-[8px] font-bold uppercase text-primary">
+        {short}
+      </span>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={logo}
+      alt=""
+      width={22}
+      height={22}
+      className="h-[22px] w-[22px] object-contain"
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export default function StandingsTable({ rows }: { rows: StandingRow[] }) {
   if (rows.length === 0) {
@@ -31,16 +59,7 @@ export default function StandingsTable({ rows }: { rows: StandingRow[] }) {
               <td className="px-3 py-2.5 tabular-nums text-muted">{row.rank}</td>
               <td className="px-3 py-2.5">
                 <span className="inline-flex min-w-0 items-center gap-2">
-                  {row.team.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={row.team.logo}
-                      alt=""
-                      width={22}
-                      height={22}
-                      className="h-[22px] w-[22px] object-contain"
-                    />
-                  ) : null}
+                  <TeamBadge name={row.team.name} logo={row.team.logo} />
                   <span className="font-semibold text-secondary">{row.team.name}</span>
                 </span>
               </td>

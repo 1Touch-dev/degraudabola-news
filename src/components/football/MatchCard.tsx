@@ -1,9 +1,14 @@
+"use client";
+
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { MatchCardModel, TeamSide } from '@/lib/football-client';
 import { formatKickoff, formatKickoffTime } from '@/lib/football-client';
 
 function Crest({ team, size = 28 }: { team: TeamSide; size?: number }) {
-  if (!team.logo) {
+  const [failed, setFailed] = useState(false);
+
+  if (!team.logo || failed) {
     return (
       <span
         className="inline-flex shrink-0 items-center justify-center rounded-full bg-black/10 text-[8px] font-bold uppercase text-secondary"
@@ -24,6 +29,7 @@ function Crest({ team, size = 28 }: { team: TeamSide; size?: number }) {
       height={size}
       className="shrink-0 object-contain"
       style={{ width: size, height: size }}
+      onError={() => setFailed(true)}
     />
   );
 }

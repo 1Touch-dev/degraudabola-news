@@ -34,6 +34,64 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function scoreSearch(article: Article, normalizedQuery: string, queryTerms: string[]): number {
+  const title = normalizeSearchText(article.title);
+  const excerpt = normalizeSearchText(article.excerpt || '');
+  const category = normalizeSearchText(article.category || '');
+  const author = normalizeSearchText(article.author || '');
+  const slug = normalizeSearchText(article.slug || '');
+  const content = normalizeSearchText((article.content || '').replace(/<[^>]+>/g, ' '));
+  const haystack = `${title} ${excerpt} ${category} ${author} ${slug} ${content}`;
+
+  let score = 0;
+  if (title === normalizedQuery) score += 150;
+  if (title.startsWith(normalizedQuery)) score += 90;
+  if (title.includes(normalizedQuery)) score += 70;
+  if (category.includes(normalizedQuery)) score += 45;
+  if (author.includes(normalizedQuery)) score += 30;
+  if (excerpt.includes(normalizedQuery)) score += 25;
+  if (slug.includes(normalizedQuery)) score += 20;
+  if (content.includes(normalizedQuery)) score += 10;
+
+  for (const term of queryTerms) {
+    if (!term) continue;
+    if (title.includes(term)) score += 18;
+    if (category.includes(term)) score += 12;
+    if (author.includes(term)) score += 8;
+    if (excerpt.includes(term)) score += 6;
+    if (slug.includes(term)) score += 5;
+    if (content.includes(term)) score += 2;
+  }
+
+  return score;
+}
+
+function searchArticles(list: Article[], query: string, limit: number): Article[] {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return [];
+  const queryTerms = normalizedQuery.split(' ').filter(Boolean);
+
+  return [...list]
+    .map((article) => ({ article, score: scoreSearch(article, normalizedQuery, queryTerms) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return new Date(b.article.publishedAt).getTime() - new Date(a.article.publishedAt).getTime();
+    })
+    .slice(0, limit)
+    .map((item) => item.article);
+}
+
 function cmsUrl(pathOrAbsolute?: string): string | null {
   if (!pathOrAbsolute || isPlaceholder(pathOrAbsolute)) return null;
   if (/^https?:\/\//i.test(pathOrAbsolute)) return pathOrAbsolute;
@@ -44,11 +102,9 @@ function cmsUrl(pathOrAbsolute?: string): string | null {
 function articlesListUrl(extra: Record<string, string | number | undefined> = {}): string {
   const fromCatalog = cmsUrl(getResolvedIntegrations().ARTICLES_LIST);
   const url = new URL(fromCatalog || `${CMS_BASE}/ai-articles`);
-  if (!fromCatalog) {
-    url.searchParams.set('targetWebsite', WEBSITE_KEY);
-    url.searchParams.set('page', String(extra.page ?? 1));
-    url.searchParams.set('limit', String(extra.limit ?? 40));
-  }
+  url.searchParams.set('targetWebsite', WEBSITE_KEY);
+  url.searchParams.set('page', String(extra.page ?? url.searchParams.get('page') ?? 1));
+  url.searchParams.set('limit', String(extra.limit ?? url.searchParams.get('limit') ?? 40));
   if (extra.page) url.searchParams.set('page', String(extra.page));
   if (extra.limit) url.searchParams.set('limit', String(extra.limit));
   if (extra.category) url.searchParams.set('category', String(extra.category));
@@ -259,32 +315,17 @@ export async function getFeaturedArticles(limit = 3): Promise<Article[]> {
 }
 
 export async function search(query: string, limit = 20): Promise<Article[]> {
-  const normalized = query.trim().toLowerCase();
+  const normalized = normalizeSearchText(query);
   if (!normalized) return [];
 
   if (CMS_BASE) {
     const live = await fetchLiveArticles();
     if (live) {
-      return sortByDate(
-        live.filter(
-          (article) =>
-            article.title.toLowerCase().includes(normalized) ||
-            article.excerpt.toLowerCase().includes(normalized) ||
-            article.category.toLowerCase().includes(normalized)
-        )
-      ).slice(0, limit);
+      return searchArticles(live, normalized, limit);
     }
   }
 
-  return sortByDate(
-    dummyArticles().filter(
-      (article) =>
-        article.title.toLowerCase().includes(normalized) ||
-        article.excerpt.toLowerCase().includes(normalized) ||
-        article.category.toLowerCase().includes(normalized) ||
-        article.author.toLowerCase().includes(normalized)
-    )
-  ).slice(0, limit);
+  return searchArticles(dummyArticles(), normalized, limit);
 }
 
 export async function getCategories(): Promise<Category[]> {

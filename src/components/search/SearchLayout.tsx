@@ -3,7 +3,21 @@ import Link from 'next/link';
 import ArticleCard from '@/components/cards/ArticleCard';
 import type { Article } from '@/lib/cms-client';
 import { siteConfig } from '@/lib/site-config';
-import { resolveCardVariant } from '@/lib/card-variants';
+
+function SearchResultsGallery({ results }: { results: Article[] }) {
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      {results.map((article, index) => (
+        <ArticleCard
+          key={article.id}
+          article={article}
+          variant={index === 0 ? 'lead' : 'compact'}
+          className={index === 0 ? 'sm:col-span-2 xl:col-span-2' : undefined}
+        />
+      ))}
+    </div>
+  );
+}
 
 interface SearchLayoutProps {
   query: string;
@@ -33,8 +47,10 @@ function SearchForm({ query }: { query: string }) {
 function CompactResults({ query, results }: SearchLayoutProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <header className="mb-6 border-b-2 border-primary pb-2">
-        <h1 className="font-display text-3xl uppercase tracking-wide text-secondary">Busca</h1>
+      <header className="mb-6 rounded-[22px] border border-black/10 bg-white p-5 shadow-card">
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">Busca visual</p>
+        <h1 className="mt-2 font-display text-3xl uppercase tracking-wide text-secondary">Busca</h1>
+        <p className="mt-2 text-sm text-muted">Resultados com destaque visual e fallback de imagem</p>
       </header>
       <SearchForm query={query} />
       {query && (
@@ -43,18 +59,25 @@ function CompactResults({ query, results }: SearchLayoutProps) {
         </p>
       )}
       {query && results.length === 0 && (
-        <p className="text-muted">Nenhuma notícia encontrada. Tente outros termos.</p>
-      )}
-      <AffiliateFeed className="divide-y divide-black/10 rounded border border-black/10 bg-white" mode="list">
-        {results.map((article) => (
-          <div key={article.id} className="px-4">
-            <ArticleCard
-              article={article}
-              variant={resolveCardVariant(siteConfig.components.standardCard.variant)}
-            />
+        <div className="rounded-[20px] border border-black/10 bg-white p-5 text-center shadow-card">
+          <p className="text-muted">Nenhuma notícia encontrada. Tente outros termos.</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Link
+              href="/news"
+              className="inline-flex min-h-10 items-center rounded-full border border-black/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-secondary hover:border-primary hover:text-primary"
+            >
+              Ver últimas
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex min-h-10 items-center rounded-full bg-primary px-4 text-xs font-semibold uppercase tracking-[0.16em] text-white hover:bg-primary/90"
+            >
+              Voltar à home
+            </Link>
           </div>
-        ))}
-      </AffiliateFeed>
+        </div>
+      )}
+      {results.length > 0 ? <SearchResultsGallery results={lead ? [lead, ...rest] : rest} /> : null}
     </div>
   );
 }
@@ -79,18 +102,27 @@ function EditorialResults({ query, results }: SearchLayoutProps) {
         </p>
       )}
       {query && results.length === 0 && (
-        <p className="text-muted">Nenhuma notícia encontrada.</p>
-      )}
-      {lead && (
-        <div className="mb-8">
-          <ArticleCard article={lead} variant="lead" />
+        <div className="rounded-[20px] border border-black/10 bg-white p-5 text-center shadow-card">
+          <p className="text-muted">Nenhuma notícia encontrada.</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Link
+              href="/news"
+              className="inline-flex min-h-10 items-center rounded-full border border-black/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-secondary hover:border-primary hover:text-primary"
+            >
+              Ver últimas
+            </Link>
+          </div>
         </div>
       )}
+<<<<<<< HEAD
       <AffiliateFeed className="grid gap-6 sm:grid-cols-2" mode="grid" offset={1}>
         {rest.map((article) => (
           <ArticleCard key={article.id} article={article} variant="compact" />
         ))}
       </AffiliateFeed>
+=======
+      <SearchResultsGallery results={lead ? [lead, ...rest] : rest} />
+>>>>>>> 00ade39 (Improve loading states and shared UI components)
     </div>
   );
 }
@@ -121,14 +153,22 @@ function ModularFilterResults({ query, results }: SearchLayoutProps) {
       </div>
       <SearchForm query={query} />
       {query && results.length === 0 && (
-        <p className="text-muted">Sem resultados. Tente outra palavra-chave.</p>
+        <div className="rounded-[20px] border border-black/10 bg-white p-5 text-center shadow-card">
+          <p className="text-muted">Sem resultados. Tente outra palavra-chave.</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <Link
+              href="/news"
+              className="inline-flex min-h-10 items-center rounded-full border border-black/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-secondary hover:border-primary hover:text-primary"
+            >
+              Ver últimas
+            </Link>
+          </div>
+        </div>
       )}
-      <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
-        <AffiliateFeed className="space-y-2 rounded-xl border border-black/10 bg-white p-2" mode="list">
-          {results.map((article, i) => (
-            <ArticleCard key={article.id} article={article} variant="rail" rank={i + 1} />
-          ))}
-        </AffiliateFeed>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="rounded-[22px] border border-black/10 bg-white p-4 shadow-card">
+          <SearchResultsGallery results={results} />
+        </div>
         <aside className="rounded-xl bg-surface p-4">
           <h2 className="font-display text-sm uppercase text-secondary">Seções</h2>
           <ul className="mt-3 space-y-2 text-sm">

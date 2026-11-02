@@ -389,7 +389,7 @@ export const siteConfig: SiteConfig = {
     "FOOTBALL_TEAMS": "/football/teams?league=72&season=2026",
     "FOOTBALL_LEAGUES": "/football/leagues",
     "MARKETS": "TODO_MARKETS_API",
-    "ARTICLES_LIST": "/ai-articles?targetWebsite=degraudabola.com&page=1&limit=20",
+    "ARTICLES_LIST": "/ai-articles?targetWebsite=degraudabola&page=1&limit=20",
     "ARTICLE_BY_SLUG": "/ai-articles/slug/{slug}",
     "BANNERS": "/banners/public/degraudabola"
   },

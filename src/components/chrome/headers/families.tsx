@@ -10,6 +10,8 @@ import { capabilityNavLinks } from '@/lib/capabilities';
 import { DURATION, transition } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 import { getCompetitions, isSportsSite, navHrefForSlug } from '@/lib/competitions';
+import BrandLogo from '@/components/ui/BrandLogo';
+import SearchCommand from '@/components/search/SearchCommand';
 
 function LiveScoreChip() {
   return (
@@ -73,37 +75,47 @@ export function BroadcastScoreboardHeader() {
         chrome.stickyMode !== 'none' && 'sticky top-0'
       )}
     >
+      <div className="border-b border-white/10 bg-gradient-to-r from-black/10 via-white/5 to-transparent">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-white/75">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-semibold text-white">
+              <span className="h-2 w-2 rounded-full bg-[#FACC15]" />
+              Série B em foco
+            </span>
+            <span className="hidden truncate md:block">
+              Cobertura diária da corrida pelo acesso, tabela e partidas decisivas
+            </span>
+          </div>
+          <EditionDate />
+        </div>
+      </div>
       <div
         className={cn(
           'mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-[padding] duration-200',
-          compressed && chrome.stickyMode === 'compact' ? 'py-1.5' : 'py-2.5'
+          compressed && chrome.stickyMode === 'compact' ? 'py-1.5' : 'py-3'
         )}
       >
-        <Link href="/" className="flex min-w-0 items-center gap-3">
-          <Image src="/logo.png" alt="" width={40} height={40} className="size-10 shrink-0 object-cover" />
-          <span className="min-w-0">
-          <p
-            className={cn(
-              'truncate font-display uppercase tracking-[0.06em]',
-              chrome.logoScale === 'compact' ? 'text-lg' : 'text-lg sm:text-2xl md:text-3xl',
-              compressed && 'md:text-2xl'
-            )}
+        <BrandLogo
+          textClassName={cn(
+            'font-display uppercase tracking-[0.06em]',
+            chrome.logoScale === 'compact' ? 'text-lg' : 'text-lg sm:text-2xl md:text-3xl',
+            compressed && 'md:text-2xl'
+          )}
+          showTagline={!compressed && !!tagline}
+        />
+        <div className="hidden items-center gap-2 lg:flex">
+          <SearchCommand />
+          <Link
+            href="/categoria/serie-b"
+            className="inline-flex min-h-11 items-center rounded-full border border-white/15 bg-white/5 px-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-white hover:bg-white hover:text-[#0B3D2E]"
           >
-            {siteConfig.siteName}
-          </p>
-          {tagline && !compressed ? (
-            <p className="truncate text-[10px] uppercase tracking-[0.2em] text-white/55">
-              {tagline}
-            </p>
-          ) : null}
-          </span>
-        </Link>
-        <div className="hidden items-center gap-4 md:flex">
+            Série B
+          </Link>
           {extra.slice(0, 4).map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="min-h-11 inline-flex items-center text-xs font-semibold uppercase tracking-wide hover:text-accent"
+              className="inline-flex min-h-11 items-center rounded-full px-3 text-xs font-semibold uppercase tracking-wide text-white/85 hover:bg-white/10 hover:text-white"
             >
               {l.label}
             </Link>
@@ -386,22 +398,19 @@ export function VisualTrendingHeader() {
           compressed && chrome.stickyMode === 'compact' ? 'py-2' : 'py-4'
         )}
       >
-        <Link href="/" className="flex min-w-0 items-center gap-3">
-          <Image src="/logo.png" alt="" width={40} height={40} className="size-10 shrink-0 object-cover" />
-          <span className="min-w-0">
-          <p className="font-display text-2xl tracking-tight text-foreground md:text-3xl">
-            {siteConfig.siteName}
-          </p>
-          {siteConfig.tagline ? (
-            <p className="mt-0.5 text-xs text-muted">{siteConfig.tagline}</p>
-          ) : null}
-          </span>
-        </Link>
+        <BrandLogo
+          textClassName="font-display text-2xl tracking-tight text-foreground md:text-3xl"
+          showTagline={!!siteConfig.tagline}
+        />
         <div className="flex items-center gap-2">
           <Link
             href="/busca"
-            className="hidden min-h-11 items-center rounded-full border border-black/10 px-4 text-xs font-semibold uppercase tracking-wide text-secondary hover:border-primary hover:text-primary sm:inline-flex"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-black/10 px-3 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-secondary hover:border-primary hover:text-primary"
           >
+            <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
             Buscar
           </Link>
           <Link

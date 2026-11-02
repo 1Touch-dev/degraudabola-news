@@ -8,30 +8,19 @@ import { formatDatePtBr } from '@/lib/utils';
 import ArticleSentiment from '@/components/article/ArticleSentiment';
 import { siteConfig } from '@/lib/site-config';
 import { hasCapability } from '@/lib/capabilities';
+import FallbackMedia from '@/components/ui/FallbackMedia';
 
 interface ArticleLayoutProps {
   article: Article;
   related: Article[];
 }
 
-function KeyPointsBlock({
-  article,
-  inverted = false,
-}: {
-  article: Article;
-  inverted?: boolean;
-}) {
-  if (!hasCapability('article-key-points') || !article.keyPoints?.length) {
-    return null;
-  }
+function KeyPointsBlock({ article, inverted = false }: { article: Article; inverted?: boolean }) {
+  if (!hasCapability('article-key-points') || !article.keyPoints?.length) return null;
   return (
     <ArticleKeyPoints
       points={article.keyPoints}
-      title={
-        article.keyPoints.length === 5
-          ? 'Em 5 pontos'
-          : `Em ${article.keyPoints.length} pontos`
-      }
+      title={article.keyPoints.length === 5 ? 'Em 5 pontos' : `Em ${article.keyPoints.length} pontos`}
       inverted={inverted}
     />
   );
@@ -40,9 +29,7 @@ function KeyPointsBlock({
 function Breadcrumb({ article }: { article: Article }) {
   return (
     <nav className="mb-4 text-xs text-muted">
-      <Link href="/" className="hover:text-primary">
-        Início
-      </Link>
+      <Link href="/" className="hover:text-primary">Início</Link>
       <span className="mx-2">/</span>
       <Link href={`/categoria/${article.categorySlug}`} className="hover:text-primary">
         {article.category}
@@ -57,11 +44,11 @@ function MetaBadges({ article }: { article: Article }) {
       <span className="rounded bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-white">
         {article.category}
       </span>
-      {article.isVideo && (
+      {article.isVideo ? (
         <span className="rounded bg-accent px-2 py-0.5 text-[10px] font-bold uppercase text-secondary">
           Vídeo
         </span>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -72,8 +59,7 @@ function Byline({ article }: { article: Article }) {
       Por <span className="font-medium text-foreground">{article.author}</span>
       {' · '}
       {formatDatePtBr(article.publishedAt)}
-      {article.readCount !== undefined &&
-        ` · ${article.readCount.toLocaleString('pt-BR')} leituras`}
+      {article.readCount !== undefined ? ` · ${article.readCount.toLocaleString('pt-BR')} leituras` : ''}
     </p>
   );
 }
@@ -88,9 +74,7 @@ function RelatedBlock({
   if (!related.length) return null;
   return (
     <section className="mt-12 border-t border-black/10 pt-8">
-      <h2 className="font-display text-xl uppercase tracking-wide text-secondary">
-        Leia também
-      </h2>
+      <h2 className="font-display text-xl uppercase tracking-wide text-secondary">Leia também</h2>
       <div className={variant === 'compact' ? 'mt-4 grid gap-4 sm:grid-cols-3' : 'mt-4 space-y-2'}>
         {related.map((item) => (
           <ArticleCard key={item.id} article={item} variant={variant} />
@@ -100,28 +84,27 @@ function RelatedBlock({
   );
 }
 
-/** Broadcast: full-bleed hero media first, then urgent story desk. */
 function MediaRichStory({ article, related }: ArticleLayoutProps) {
   return (
     <article className="bg-[#0b0f14] text-white">
-      {article.imageUrl && (
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-secondary md:aspect-[2.35/1]">
-          <Image
-            src={article.imageUrl}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="100vw"
-            priority
-          />
-          <div className="absolute inset-0 hidden bg-gradient-to-t from-[#0b0f14] via-[#0b0f14]/35 to-transparent md:block" />
-          <div className="absolute bottom-0 left-0 right-0 mx-auto hidden max-w-4xl px-4 pb-8 md:block md:pb-12">
-            <MetaBadges article={article} />
-            <h1 className="mt-3 break-words font-display text-5xl uppercase leading-[0.95] tracking-wide text-white lg:text-6xl">
-              {article.title}
-            </h1>
-          </div>
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-secondary md:aspect-[2.35/1]">
+        <FallbackMedia
+          src={article.imageUrl}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority
+          fallbackClassName="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 mx-auto hidden max-w-4xl px-4 pb-8 md:block md:pb-12">
+          <MetaBadges article={article} />
+          <h1 className="mt-3 break-words font-display text-5xl uppercase leading-[0.95] tracking-wide text-white lg:text-6xl">
+            {article.title}
+          </h1>
         </div>
+<<<<<<< HEAD
       )}
       <div className="mx-auto min-w-0 max-w-6xl article-content-shell px-4 py-8 md:py-10">
         {article.imageUrl ? (
@@ -147,10 +130,25 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
           </div>
         )}
         {article.excerpt && (
+=======
+      </div>
+
+      <div className="mx-auto min-w-0 max-w-3xl px-4 py-8 md:py-10">
+        <header className="mb-8 md:hidden">
+          <MetaBadges article={article} />
+          <h1 className="mt-3 break-words font-display text-3xl uppercase leading-tight tracking-wide">
+            {article.title}
+          </h1>
+        </header>
+        <div className="mb-6 [&_a]:text-white/70 [&_a:hover]:text-accent [&_.text-muted]:text-white/55">
+          <Breadcrumb article={article} />
+        </div>
+        {article.excerpt ? (
+>>>>>>> 00ade39 (Improve loading states and shared UI components)
           <p className="break-words border-l-4 border-primary pl-4 text-base font-medium leading-relaxed text-white/85 sm:text-lg">
             {article.excerpt}
           </p>
-        )}
+        ) : null}
         <div className="mt-4 text-white/60 [&_.text-foreground]:text-white [&_.text-muted]:text-white/55">
           <Byline article={article} />
         </div>
@@ -160,7 +158,7 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
           html={article.content}
         />
         <ArticleSentiment articleId={article.id} slug={article.slug} tone="dark" />
-        <div className="[&_h2]:text-white [&_h3]:text-white [&_.text-muted]:text-white/50 [&_.text-foreground]:text-white [&_.text-primary]:text-accent [&_.border-black\\/10]:border-white/10">
+        <div className="[&_h2]:text-white [&_h3]:text-white [&_.text-muted]:text-white/50 [&_.text-foreground]:text-white [&_.text-primary]:text-accent [&_.border-black\/10]:border-white/10">
           <RelatedBlock related={related} variant="horizontal" />
         </div>
       </div>
@@ -168,47 +166,41 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
   );
 }
 
-/** Premium: narrow longform, dek + serif body, image after intro. */
 function LongformFocused({ article, related }: ArticleLayoutProps) {
   return (
     <article className="bg-[#FAFAF8]">
+<<<<<<< HEAD
       <div className="mx-auto max-w-6xl article-content-shell px-5 py-12 md:py-20">
         <div className="text-center [&_.text-muted]:text-muted">
           <Breadcrumb article={article} />
         </div>
+=======
+      <div className="mx-auto max-w-[40rem] px-5 py-12 md:py-20">
+>>>>>>> 00ade39 (Improve loading states and shared UI components)
         <header className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary">
-            {article.category}
-            {article.isVideo ? ' · Vídeo' : ''}
-          </p>
-          <h1 className="mt-5 font-display text-3xl leading-[1.1] tracking-[-0.02em] text-secondary md:text-5xl">
-            {article.title}
-          </h1>
-          {article.excerpt && (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">Reportagem</p>
+          <h1 className="mt-4 font-display text-4xl leading-tight text-secondary md:text-6xl">{article.title}</h1>
+          {article.excerpt ? (
             <p className="mx-auto mt-6 max-w-xl font-article text-xl italic leading-relaxed text-muted">
               {article.excerpt}
             </p>
-          )}
+          ) : null}
           <div className="mt-2">
             <Byline article={article} />
           </div>
         </header>
 
-        <KeyPointsBlock article={article} />
-
-        {article.imageUrl && (
-          <figure className="relative mt-12 aspect-[16/10] overflow-hidden bg-surface">
-            <Image
-              src={article.imageUrl}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="(max-width: 672px) 100vw, 640px"
-              priority
-            />
-            <figcaption className="sr-only">{article.title}</figcaption>
-          </figure>
-        )}
+        <figure className="relative mt-12 aspect-[16/10] overflow-hidden bg-surface">
+          <FallbackMedia
+            src={article.imageUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 768px"
+            fallbackClassName="absolute inset-0"
+          />
+          <figcaption className="sr-only">{article.title}</figcaption>
+        </figure>
 
         <ArticleAffiliateBody
           className="prose prose-lg prose-neutral  max-w-none font-article leading-[1.85] prose-headings:font-display prose-headings:tracking-[-0.01em] prose-p:text-secondary/90 prose-a:text-primary"
@@ -221,7 +213,6 @@ function LongformFocused({ article, related }: ArticleLayoutProps) {
   );
 }
 
-/** Modular: story column + sticky related rail. */
 function SplitRailStory({ article, related }: ArticleLayoutProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -236,21 +227,16 @@ function SplitRailStory({ article, related }: ArticleLayoutProps) {
             <p className="mt-3 text-base leading-relaxed text-muted">{article.excerpt}</p>
             <Byline article={article} />
           </header>
-
-          <KeyPointsBlock article={article} />
-
-          {article.imageUrl && (
-            <div className="relative mt-6 aspect-video overflow-hidden rounded-xl">
-              <Image
-                src={article.imageUrl}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 800px"
-                priority
-              />
-            </div>
-          )}
+          <div className="relative mt-6 aspect-video overflow-hidden rounded-xl">
+            <FallbackMedia
+              src={article.imageUrl}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 768px"
+              fallbackClassName="absolute inset-0"
+            />
+          </div>
 
           <ArticleAffiliateBody
           className="prose prose-neutral  max-w-none font-article leading-relaxed"
@@ -261,9 +247,7 @@ function SplitRailStory({ article, related }: ArticleLayoutProps) {
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-xl border border-black/10 bg-surface p-4">
-            <h2 className="font-display text-sm uppercase tracking-wider text-secondary">
-              Em alta
-            </h2>
+            <h2 className="font-display text-sm uppercase tracking-wider text-secondary">Em alta</h2>
             <div className="mt-3 space-y-1">
               {related.length ? (
                 related.map((item, i) => (
@@ -280,40 +264,43 @@ function SplitRailStory({ article, related }: ArticleLayoutProps) {
   );
 }
 
-/** Interview / Q&A-forward: pull-quote dek + two-column body. */
 function InterviewFocus({ article, related }: ArticleLayoutProps) {
   return (
-    <article className="mx-auto max-w-6xl px-4 py-10">
-      <Breadcrumb article={article} />
-      <div className="grid gap-10 lg:grid-cols-[1fr_340px]">
+    <article className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div>
+          <Breadcrumb article={article} />
           <MetaBadges article={article} />
-          <h1 className="mt-4 font-heading text-3xl font-bold leading-tight md:text-5xl">
-            {article.title}
-          </h1>
-          <blockquote className="mt-6 border-l-4 border-primary pl-4 font-article text-xl italic leading-relaxed text-secondary">
-            “{article.excerpt}”
-          </blockquote>
+          <h1 className="mt-4 font-display text-4xl leading-tight text-secondary md:text-5xl">{article.title}</h1>
+          {article.excerpt ? (
+            <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted">{article.excerpt}</p>
+          ) : null}
           <Byline article={article} />
+<<<<<<< HEAD
           <ArticleAffiliateBody
           className="prose prose-neutral  max-w-none font-article"
           html={article.content}
         />
+=======
+          <div
+            className="prose prose-lg mt-10 max-w-none font-article"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+          <ArticleSentiment articleId={article.id} slug={article.slug} />
+>>>>>>> 00ade39 (Improve loading states and shared UI components)
         </div>
         <aside className="space-y-4">
-          {article.imageUrl && (
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-              <Image
-                src={article.imageUrl}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="340px"
-                priority
-              />
-            </div>
-          )}
-          <ArticleSentiment articleId={article.id} slug={article.slug} />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
+            <FallbackMedia
+              src={article.imageUrl}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="340px"
+              priority
+              fallbackClassName="absolute inset-0"
+            />
+          </div>
           <RelatedBlock related={related} variant="rail" />
         </aside>
       </div>
@@ -326,16 +313,15 @@ function GalleryLead({ article, related }: ArticleLayoutProps) {
     <article>
       <div className="grid gap-2 bg-secondary p-2 md:grid-cols-3">
         <div className="relative aspect-[4/3] md:col-span-2 md:aspect-auto md:min-h-[420px]">
-          {article.imageUrl && (
-            <Image
-              src={article.imageUrl}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="(max-width:768px) 100vw, 66vw"
-              priority
-            />
-          )}
+          <FallbackMedia
+            src={article.imageUrl}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width:768px) 100vw, 66vw"
+            priority
+            fallbackClassName="absolute inset-0"
+          />
         </div>
         <div className="flex flex-col justify-end bg-black/40 p-6 text-white md:min-h-[420px]">
           <MetaBadges article={article} />
@@ -359,17 +345,13 @@ function OpinionColumn({ article, related }: ArticleLayoutProps) {
   return (
     <article className="mx-auto max-w-6xl article-content-shell px-4 py-12">
       <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-primary">Opinião</p>
-      <h1 className="mt-4 font-display text-4xl leading-[1.1] text-secondary md:text-5xl">
-        {article.title}
-      </h1>
+      <h1 className="mt-4 font-display text-4xl leading-[1.1] text-secondary md:text-5xl">{article.title}</h1>
       <Byline article={article} />
-      {article.excerpt && (
-        <p className="mt-6 text-xl leading-relaxed text-muted-text">{article.excerpt}</p>
-      )}
+      {article.excerpt ? <p className="mt-6 text-xl leading-relaxed text-muted-text">{article.excerpt}</p> : null}
       <ArticleAffiliateBody
-          className="prose prose-lg  max-w-none font-body"
-          html={article.content}
-        />
+        className="prose prose-lg mt-10 max-w-none font-body"
+        html={article.content}
+      />
       <ArticleSentiment articleId={article.id} slug={article.slug} />
       <RelatedBlock related={related} variant="horizontal" />
     </article>
