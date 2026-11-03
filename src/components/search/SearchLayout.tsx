@@ -1,23 +1,6 @@
-import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import Link from 'next/link';
-import ArticleCard from '@/components/cards/ArticleCard';
 import type { Article } from '@/lib/cms-client';
-import { siteConfig } from '@/lib/site-config';
-
-function SearchResultsGallery({ results }: { results: Article[] }) {
-  return (
-    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-      {results.map((article, index) => (
-        <ArticleCard
-          key={article.id}
-          article={article}
-          variant={index === 0 ? 'lead' : 'compact'}
-          className={index === 0 ? 'sm:col-span-2 xl:col-span-2' : undefined}
-        />
-      ))}
-    </div>
-  );
-}
+import FallbackMedia from '@/components/ui/FallbackMedia';
 
 interface SearchLayoutProps {
   query: string;
@@ -26,17 +9,17 @@ interface SearchLayoutProps {
 
 function SearchForm({ query }: { query: string }) {
   return (
-    <form action="/busca" method="get" className="mb-8 flex gap-2">
+    <form action="/busca" method="get" className="mb-6 flex flex-col gap-3 sm:flex-row">
       <input
         type="search"
         name="q"
         defaultValue={query}
         placeholder="Digite palavras-chave..."
-        className="flex-1 rounded border border-black/20 bg-white px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+        className="min-h-12 flex-1 rounded-full border border-black/15 bg-white px-5 text-sm focus:border-primary focus:outline-none"
       />
       <button
         type="submit"
-        className="rounded bg-primary px-6 py-2.5 text-sm font-bold uppercase text-white transition-transform motion-energetic:hover:scale-[1.02]"
+        className="inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-bold uppercase text-white hover:bg-primary/90"
       >
         Buscar
       </button>
@@ -44,24 +27,68 @@ function SearchForm({ query }: { query: string }) {
   );
 }
 
-function CompactResults({ query, results }: SearchLayoutProps) {
-  const [lead, ...rest] = results;
+function SearchResultRow({ article }: { article: Article }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
+    <Link
+      href={`/artigo/${article.slug}`}
+      className="flex items-start gap-4 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition hover:border-primary/25 hover:bg-primary/5"
+    >
+      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+        <FallbackMedia
+          src={article.imageUrl}
+          alt=""
+          fill
+          sizes="112px"
+          className="object-cover"
+          fallbackClassName="absolute inset-0"
+        />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+            {article.category}
+          </span>
+          {article.isVideo ? (
+            <span className="inline-flex items-center rounded-full bg-accent/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-secondary">
+              Vídeo
+            </span>
+          ) : null}
+        </div>
+
+        <h2 className="mt-2 line-clamp-2 font-heading text-base font-semibold leading-snug text-foreground md:text-lg">
+          {article.title}
+        </h2>
+
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">
+          {article.excerpt}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+export default function SearchLayout({ query, results }: SearchLayoutProps) {
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-8 md:py-10">
       <header className="mb-6 rounded-[22px] border border-black/10 bg-white p-5 shadow-card">
-        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">Busca visual</p>
-        <h1 className="mt-2 font-display text-3xl uppercase tracking-wide text-secondary">Busca</h1>
-        <p className="mt-2 text-sm text-muted">Resultados com destaque visual e fallback de imagem</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">Busca</p>
+        <h1 className="mt-2 font-display text-3xl uppercase tracking-wide text-secondary">Encontre notícias</h1>
+        <p className="mt-2 text-sm text-muted">Pesquise e veja resultados com imagem, título e resumo.</p>
       </header>
+
       <SearchForm query={query} />
-      {query && (
+
+      {query ? (
         <p className="mb-4 text-sm text-muted">
           {results.length} resultado{results.length !== 1 ? 's' : ''} para &ldquo;{query}&rdquo;
         </p>
-      )}
-      {query && results.length === 0 && (
-        <div className="rounded-[20px] border border-black/10 bg-white p-5 text-center shadow-card">
-          <p className="text-muted">Nenhuma notícia encontrada. Tente outros termos.</p>
+      ) : null}
+
+      {query && results.length === 0 ? (
+        <div className="rounded-[22px] border border-black/10 bg-white p-6 text-center shadow-card">
+          <p className="text-base font-medium text-secondary">Nenhuma notícia encontrada.</p>
+          <p className="mt-2 text-sm text-muted">Tente outros termos ou veja as últimas notícias.</p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <Link
               href="/news"
@@ -77,116 +104,15 @@ function CompactResults({ query, results }: SearchLayoutProps) {
             </Link>
           </div>
         </div>
-      )}
-      {results.length > 0 ? <SearchResultsGallery results={lead ? [lead, ...rest] : rest} /> : null}
-    </div>
-  );
-}
+      ) : null}
 
-function EditorialResults({ query, results }: SearchLayoutProps) {
-  const [lead, ...rest] = results;
-  return (
-    <div className="mx-auto max-w-5xl px-4 py-10 md:py-14">
-      <header className="mb-10 max-w-2xl">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-          Pesquisa
-        </p>
-        <h1 className="mt-2 font-heading text-4xl font-bold text-foreground">Busca</h1>
-        <p className="mt-2 font-article italic text-muted">
-          Resultados editoriais em {siteConfig.siteName}
-        </p>
-      </header>
-      <SearchForm query={query} />
-      {query && (
-        <p className="mb-6 text-sm text-muted">
-          {results.length} resultado{results.length !== 1 ? 's' : ''} para &ldquo;{query}&rdquo;
-        </p>
-      )}
-      {query && results.length === 0 && (
-        <div className="rounded-[20px] border border-black/10 bg-white p-5 text-center shadow-card">
-          <p className="text-muted">Nenhuma notícia encontrada.</p>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Link
-              href="/news"
-              className="inline-flex min-h-10 items-center rounded-full border border-black/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-secondary hover:border-primary hover:text-primary"
-            >
-              Ver últimas
-            </Link>
-          </div>
-        </div>
-      )}
-      <SearchResultsGallery results={lead ? [lead, ...rest] : rest} />
-    </div>
-  );
-}
-
-function ModularFilterResults({ query, results }: SearchLayoutProps) {
-  const cats = [...new Set(results.map((r) => r.category))];
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-black/10 pb-4">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Busca</h1>
-          {query && (
-            <p className="mt-1 text-sm text-muted">
-              {results.length} hit{results.length !== 1 ? 's' : ''} · &ldquo;{query}&rdquo;
-            </p>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {cats.slice(0, 5).map((c) => (
-            <span
-              key={c}
-              className="rounded-full bg-surface px-3 py-1 text-[10px] font-bold uppercase text-secondary"
-            >
-              {c}
-            </span>
+      {results.length > 0 ? (
+        <div className="space-y-3">
+          {results.map((article) => (
+            <SearchResultRow key={article.id} article={article} />
           ))}
         </div>
-      </div>
-      <SearchForm query={query} />
-      {query && results.length === 0 && (
-        <div className="rounded-[20px] border border-black/10 bg-white p-5 text-center shadow-card">
-          <p className="text-muted">Sem resultados. Tente outra palavra-chave.</p>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <Link
-              href="/news"
-              className="inline-flex min-h-10 items-center rounded-full border border-black/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-secondary hover:border-primary hover:text-primary"
-            >
-              Ver últimas
-            </Link>
-          </div>
-        </div>
-      )}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="rounded-[22px] border border-black/10 bg-white p-4 shadow-card">
-          <SearchResultsGallery results={results} />
-        </div>
-        <aside className="rounded-xl bg-surface p-4">
-          <h2 className="font-display text-sm uppercase text-secondary">Seções</h2>
-          <ul className="mt-3 space-y-2 text-sm">
-            {siteConfig.navCategories.map((cat) => (
-              <li key={cat.slug}>
-                <Link href={`/categoria/${cat.slug}`} className="hover:text-primary">
-                  {cat.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      </div>
+      ) : null}
     </div>
   );
-}
-
-export default function SearchLayout({ query, results }: SearchLayoutProps) {
-  switch (siteConfig.layouts.search) {
-    case 'editorial-results':
-      return <EditorialResults query={query} results={results} />;
-    case 'modular-filter-results':
-      return <ModularFilterResults query={query} results={results} />;
-    case 'compact-results':
-    default:
-      return <CompactResults query={query} results={results} />;
-  }
 }
