@@ -45,6 +45,7 @@ function SearchForm({ query }: { query: string }) {
 }
 
 function CompactResults({ query, results }: SearchLayoutProps) {
+  const [lead, ...rest] = results;
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
       <header className="mb-6 rounded-[22px] border border-black/10 bg-white p-5 shadow-card">
@@ -114,15 +115,7 @@ function EditorialResults({ query, results }: SearchLayoutProps) {
           </div>
         </div>
       )}
-<<<<<<< HEAD
-      <AffiliateFeed className="grid gap-6 sm:grid-cols-2" mode="grid" offset={1}>
-        {rest.map((article) => (
-          <ArticleCard key={article.id} article={article} variant="compact" />
-        ))}
-      </AffiliateFeed>
-=======
       <SearchResultsGallery results={lead ? [lead, ...rest] : rest} />
->>>>>>> 00ade39 (Improve loading states and shared UI components)
     </div>
   );
 }

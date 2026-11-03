@@ -104,8 +104,7 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
             {article.title}
           </h1>
         </div>
-<<<<<<< HEAD
-      )}
+      </div>
       <div className="mx-auto min-w-0 max-w-6xl article-content-shell px-4 py-8 md:py-10">
         {article.imageUrl ? (
           <header className="mb-6 md:hidden">
@@ -129,22 +128,7 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
             <Breadcrumb article={article} />
           </div>
         )}
-        {article.excerpt && (
-=======
-      </div>
-
-      <div className="mx-auto min-w-0 max-w-3xl px-4 py-8 md:py-10">
-        <header className="mb-8 md:hidden">
-          <MetaBadges article={article} />
-          <h1 className="mt-3 break-words font-display text-3xl uppercase leading-tight tracking-wide">
-            {article.title}
-          </h1>
-        </header>
-        <div className="mb-6 [&_a]:text-white/70 [&_a:hover]:text-accent [&_.text-muted]:text-white/55">
-          <Breadcrumb article={article} />
-        </div>
         {article.excerpt ? (
->>>>>>> 00ade39 (Improve loading states and shared UI components)
           <p className="break-words border-l-4 border-primary pl-4 text-base font-medium leading-relaxed text-white/85 sm:text-lg">
             {article.excerpt}
           </p>
@@ -169,14 +153,10 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
 function LongformFocused({ article, related }: ArticleLayoutProps) {
   return (
     <article className="bg-[#FAFAF8]">
-<<<<<<< HEAD
       <div className="mx-auto max-w-6xl article-content-shell px-5 py-12 md:py-20">
         <div className="text-center [&_.text-muted]:text-muted">
           <Breadcrumb article={article} />
         </div>
-=======
-      <div className="mx-auto max-w-[40rem] px-5 py-12 md:py-20">
->>>>>>> 00ade39 (Improve loading states and shared UI components)
         <header className="text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">Reportagem</p>
           <h1 className="mt-4 font-display text-4xl leading-tight text-secondary md:text-6xl">{article.title}</h1>
@@ -276,18 +256,11 @@ function InterviewFocus({ article, related }: ArticleLayoutProps) {
             <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted">{article.excerpt}</p>
           ) : null}
           <Byline article={article} />
-<<<<<<< HEAD
           <ArticleAffiliateBody
-          className="prose prose-neutral  max-w-none font-article"
-          html={article.content}
-        />
-=======
-          <div
-            className="prose prose-lg mt-10 max-w-none font-article"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            className="prose prose-neutral mt-10 max-w-none font-article"
+            html={article.content}
           />
           <ArticleSentiment articleId={article.id} slug={article.slug} />
->>>>>>> 00ade39 (Improve loading states and shared UI components)
         </div>
         <aside className="space-y-4">
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">

@@ -403,12 +403,6 @@ function CategoryRail({ articles }: { articles: Article[] }) {
 function HorizontalStream({ articles }: { articles: Article[] }) {
   return (
     <section>
-<<<<<<< HEAD
-      <h2 className="mb-3 border-b-2 border-primary pb-1 font-display text-xl uppercase tracking-wide text-secondary">
-        Últimas
-      </h2>
-      <AffiliateFeed className="divide-y divide-black/10 rounded border border-black/10 bg-white" mode="list">
-=======
       <div className="mb-4 flex items-center justify-between gap-3 border-b border-black/5 pb-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Cobertura</p>
@@ -419,13 +413,12 @@ function HorizontalStream({ articles }: { articles: Article[] }) {
         </Link>
       </div>
       <div className="space-y-3">
->>>>>>> 00ade39 (Improve loading states and shared UI components)
         {articles.map((article) => (
           <div key={article.id}>
             <ArticleCard article={article} variant="horizontal" />
           </div>
         ))}
-      </AffiliateFeed>
+      </div>
     </section>
   );
 }
@@ -761,16 +754,8 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
   if (useMagazineShell) {
     return (
       <div className="mx-auto max-w-3xl space-y-10 px-4 py-12 md:py-16">
-<<<<<<< HEAD
-        <AffiliateSections enabled={articles.length >= 6}>{recipe.slots.map((slot) => (
-          <MotionSection key={slot.id}>
-            {renderBlock(slot, articles, mostRead, cursor)}
-          </MotionSection>
-        ))}</AffiliateSections>
-=======
         <TopBriefBar articles={articles} />
         {recipe.slots.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
->>>>>>> 00ade39 (Improve loading states and shared UI components)
       </div>
     );
   }
