@@ -1,22 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap');
 
 /**
- * Design Tokens - Auto-generated
- * Design: Degrau Clássico Design System
- * Archetype: brief-composed
- * Version: 1.0.0
- * Generated: 2026-09-29T06:56:50.620Z
+ * Design Tokens — Degrau da Bola
+ * Niche: Série B / corrida pelo acesso
+ * Direction: stadium floodlight + promotion ladder
  */
 
 :root {
-  --color-primary: #2e7d32;
-  --color-secondary: #8E979E;
-  --color-accent: #7D2AE8;
-  --color-background: #f8f9fa;
-  --color-surface: #ffffff;
-  --color-text: #333333;
-  --color-muted-text: #6c757d;
-  --color-success: #28a745;
+  --color-primary: #146c43;
+  --color-secondary: #0f2a20;
+  --color-accent: #f0b429;
+  --color-background: #e8eee9;
+  --color-surface: #fbfcfa;
+  --color-text: #0f1a15;
+  --color-muted-text: #5a6b62;
+  --color-success: #1a9b57;
+  --color-pitch-night: #071a14;
+  --color-floodlight: #f0b429;
+  --color-live: #e11d48;
   --spacing-0: 4px;
   --spacing-1: 8px;
   --spacing-2: 12px;
@@ -25,27 +26,29 @@
   --spacing-5: 24px;
   --spacing-6: 32px;
   --spacing-7: 48px;
-  --radius-0: 4px;
-  --radius-1: 8px;
-  --radius-2: 12px;
-  --radius-3: 16px;
-  --font-display: Outfit;
-  --font-heading: Outfit;
-  --font-body: 'Open Sans';
-  --font-article: Lora;
+  --radius-0: 2px;
+  --radius-1: 4px;
+  --radius-2: 8px;
+  --radius-3: 12px;
+  --font-display: 'Bebas Neue';
+  --font-heading: 'Barlow Condensed';
+  --font-body: 'Source Sans 3';
+  --font-article: 'Source Serif 4';
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.10);
-  --border-subtle: 1px solid rgba(51,65,85,0.12);
+  --shadow-card: 0 1px 0 rgba(15, 42, 32, 0.08), 0 8px 24px rgba(7, 26, 20, 0.06);
+  --shadow-elevated: 0 12px 36px rgba(7, 26, 20, 0.14);
+  --border-subtle: 1px solid rgba(15, 42, 32, 0.12);
   --breakpoint-mobile: 320px;
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1024px;
   --breakpoint-wide: 1440px;
+  --pitch-texture: radial-gradient(ellipse at 20% 0%, rgba(240, 180, 41, 0.12), transparent 45%),
+    radial-gradient(ellipse at 90% 10%, rgba(20, 108, 67, 0.18), transparent 40%),
+    linear-gradient(180deg, #e8eee9 0%, #dfe8e1 100%);
 }
 
-/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -54,20 +57,26 @@
   }
 }
 
-/* Typography Base */
 body {
-  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-body), 'Segoe UI', sans-serif;
   color: var(--color-text);
   background-color: var(--color-background);
+  background-image: var(--pitch-texture);
+  background-attachment: fixed;
   font-weight: var(--font-weight-regular);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), 'Segoe UI', sans-serif;
   font-weight: var(--font-weight-bold);
+  letter-spacing: 0.01em;
 }
 
-/* Utility Classes */
 .surface {
   background-color: var(--color-surface);
 }
@@ -92,13 +101,4 @@ h1, h2, h3, h4, h5, h6 {
 
 .card-elevated {
   box-shadow: var(--shadow-elevated);
-}
-
-/* Responsive Utilities */
-@media (max-width: var(--breakpoint-mobile)) {
-  .hide-mobile { display: none !important; }
-}
-
-@media (min-width: var(--breakpoint-tablet)) {
-  .hide-desktop { display: none !important; }
 }

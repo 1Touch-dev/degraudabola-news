@@ -55,7 +55,12 @@
   }
 
   body {
-    @apply min-h-screen bg-background font-body text-foreground antialiased;
+    @apply min-h-screen font-body text-foreground antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 45%, white);
+    color: var(--color-pitch-night);
   }
 
   img,

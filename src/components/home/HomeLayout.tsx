@@ -7,7 +7,7 @@ import { getLatestArticles, getMostRead } from '@/lib/cms-client';
  */
 export default async function HomeLayout() {
   const [articles, mostRead] = await Promise.all([
-    getLatestArticles(12),
+    getLatestArticles(24),
     getMostRead(5),
   ]);
 

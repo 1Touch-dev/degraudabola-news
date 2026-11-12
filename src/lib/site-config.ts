@@ -266,20 +266,29 @@ export const siteConfig: SiteConfig = {
   ],
   homepageRecipe: {
     "schemaVersion": "recipe-v1",
-    "id": "brief-brief-composed-a-1790665008557-a",
+    "id": "ladder-floodlight-serie-b-a",
     "page": "homepage",
     "homepageLayout": "brief-composed",
-    "rhythmId": "rhythm-scoreboard-live",
+    "rhythmId": "rhythm-ladder-floodlight",
     "grid": "scoreboard-split",
     "slots": [
       {
         "id": "lead",
         "kind": "hero",
-        "block": "HeroLead",
+        "block": "HeroCarousel",
         "span": "full",
-        "limit": 1,
+        "limit": 5,
         "options": {
           "source": "brief"
+        }
+      },
+      {
+        "id": "ao-vivo-scores",
+        "kind": "scoreboard",
+        "block": "ScoreboardStrip",
+        "limit": 3,
+        "options": {
+          "label": "Ao vivo"
         }
       },
       {
@@ -294,7 +303,14 @@ export const siteConfig: SiteConfig = {
         "id": "ultimas",
         "kind": "stream",
         "block": "HorizontalStream",
-        "limit": 8,
+        "limit": 6,
+        "options": {}
+      },
+      {
+        "id": "nacional",
+        "kind": "section-pair",
+        "block": "DualSection",
+        "limit": 4,
         "options": {}
       },
       {
@@ -303,23 +319,7 @@ export const siteConfig: SiteConfig = {
         "block": "DiscoveryChips",
         "limit": 12,
         "options": {
-          "label": "Estados"
-        }
-      },
-      {
-        "id": "nacional",
-        "kind": "section-pair",
-        "block": "DualSection",
-        "limit": 2,
-        "options": {}
-      },
-      {
-        "id": "ao-vivo-scores",
-        "kind": "scoreboard",
-        "block": "ScoreboardStrip",
-        "limit": 3,
-        "options": {
-          "label": "Ao vivo"
+          "label": "Portões"
         }
       },
       {
@@ -361,11 +361,11 @@ export const siteConfig: SiteConfig = {
       "family": "broadcast-scoreboard",
       "brandPosition": "left",
       "navPosition": "below-main",
-      "breakingPosition": "none",
-      "searchMode": "icon",
-      "stickyMode": "none",
-      "logoScale": "standard",
-      "edgeStyle": "flat",
+      "breakingPosition": "below-nav",
+      "searchMode": "expanded",
+      "stickyMode": "compact",
+      "logoScale": "masthead",
+      "edgeStyle": "layered",
       "motionProfile": "energetic",
       "signatureModule": "live-score-indicator",
       "surface": "dark"
@@ -373,9 +373,9 @@ export const siteConfig: SiteConfig = {
     "footer": {
       "family": "sports-clubhouse",
       "brandScale": "large",
-      "backgroundTreatment": "solid",
-      "columnRhythm": "balanced",
-      "showNewsletter": false,
+      "backgroundTreatment": "tonal",
+      "columnRhythm": "asymmetric",
+      "showNewsletter": true,
       "showSocialWall": true,
       "showPopularTopics": true,
       "showAppPromotion": true

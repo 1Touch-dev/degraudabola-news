@@ -11,13 +11,13 @@ import { DURATION, transition } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 import { getCompetitions, isSportsSite, navHrefForSlug } from '@/lib/competitions';
 import BrandLogo from '@/components/ui/BrandLogo';
-import SearchCommand from '@/components/search/SearchCommand';
+import HeaderSearch from '@/components/search/HeaderSearch';
 
 function LiveScoreChip() {
   return (
     <Link
       href="/ao-vivo"
-      className="inline-flex min-h-11 items-center gap-2 rounded bg-[#E11D48] px-3 text-[10px] font-bold uppercase tracking-wider text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      className="inline-flex min-h-9 items-center gap-2 rounded-md bg-live px-2.5 text-[10px] font-bold uppercase tracking-wider text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white motion-reduce:animate-none" />
       Ao vivo
@@ -54,85 +54,49 @@ function RegionSelector() {
 export function BroadcastScoreboardHeader() {
   const chrome = resolveChrome().header;
   const [menuOpen, setMenuOpen] = useState(false);
-  const [compressed, setCompressed] = useState(false);
   const reduced = useReducedMotion();
   const menuId = useId();
-  const tagline = String(siteConfig.tagline || '').trim();
-  const extra = capabilityNavLinks();
 
-  useEffect(() => {
-    if (chrome.stickyMode === 'none') return;
-    const onScroll = () => setCompressed(window.scrollY > 20);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [chrome.stickyMode]);
+  const mobileLinks = [
+    { href: '/', label: 'Início' },
+    { href: '/news', label: 'Notícias' },
+    { href: '/categoria/serie-b', label: 'Série B' },
+    { href: '/categoria/acesso', label: 'Acesso' },
+    { href: '/futebol', label: 'Partidas' },
+    { href: '/ao-vivo', label: 'Ao vivo' },
+    { href: '/categoria/tabela', label: 'Tabela' },
+    { href: '/categories', label: 'Categorias' },
+  ];
 
   return (
     <header
       className={cn(
-        'z-50 border-b border-primary/80 bg-[#0B3D2E] text-white',
+        'z-50 border-b border-accent/20 bg-pitch-night text-white',
         chrome.stickyMode !== 'none' && 'sticky top-0'
       )}
     >
-      <div className="border-b border-white/10 bg-gradient-to-r from-black/10 via-white/5 to-transparent">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-white/75">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-semibold text-white">
-              <span className="h-2 w-2 rounded-full bg-[#FACC15]" />
-              Série B em foco
-            </span>
-            <span className="hidden truncate md:block">
-              Cobertura diária da corrida pelo acesso, tabela e partidas decisivas
-            </span>
-          </div>
-          <EditionDate />
-        </div>
-      </div>
-      <div
-        className={cn(
-          'mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-[padding] duration-200',
-          compressed && chrome.stickyMode === 'compact' ? 'py-1.5' : 'py-3'
-        )}
-      >
+      <div className="relative mx-auto flex max-w-7xl items-center gap-2 px-3 py-2 md:gap-3 md:px-4">
         <BrandLogo
-          textClassName={cn(
-            'font-display uppercase tracking-[0.06em]',
-            chrome.logoScale === 'compact' ? 'text-lg' : 'text-lg sm:text-2xl md:text-3xl',
-            compressed && 'md:text-2xl'
-          )}
-          showTagline={!compressed && !!tagline}
+          className="min-w-0 flex-1"
+          textClassName="font-display text-base uppercase tracking-[0.04em] sm:text-xl"
+          showTagline={false}
         />
-        <div className="hidden items-center gap-2 lg:flex">
-          <SearchCommand />
-          <Link
-            href="/categoria/serie-b"
-            className="inline-flex min-h-11 items-center rounded-full border border-white/15 bg-white/5 px-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-white hover:bg-white hover:text-[#0B3D2E]"
-          >
-            Série B
-          </Link>
-          {extra.slice(0, 4).map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="inline-flex min-h-11 items-center rounded-full px-3 text-xs font-semibold uppercase tracking-wide text-white/85 hover:bg-white/10 hover:text-white"
-            >
-              {l.label}
-            </Link>
-          ))}
-          {chrome.signatureModule === 'live-score-indicator' ? (
-            <LiveScoreChip />
-          ) : null}
+        <div className="ml-auto hidden shrink-0 items-center gap-2 md:flex">
+          <HeaderSearch className="w-56 lg:w-72" compact />
+          {chrome.signatureModule === 'live-score-indicator' ? <LiveScoreChip /> : null}
         </div>
-        <button
-          type="button"
-          className="min-h-11 shrink-0 bg-[#E11D48] px-4 text-xs font-bold uppercase md:hidden"
-          aria-expanded={menuOpen}
-          aria-controls={menuId}
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          {menuOpen ? 'Fechar' : 'Menu'}
-        </button>
+        <div className="relative ml-auto flex shrink-0 items-center gap-2 md:hidden">
+          <HeaderSearch iconOnly />
+          <button
+            type="button"
+            className="min-h-9 shrink-0 bg-live px-3 text-[11px] font-bold uppercase"
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? 'Fechar' : 'Menu'}
+          </button>
+        </div>
       </div>
       <AnimatePresence>
         {menuOpen ? (
@@ -142,50 +106,17 @@ export function BroadcastScoreboardHeader() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={reduced ? undefined : { height: 0, opacity: 0 }}
             transition={transition(DURATION.base, !!reduced)}
-            className="max-h-[70vh] overflow-y-auto border-t border-white/15 px-4 py-3 md:hidden"
+            className="max-h-[70vh] overflow-y-auto border-t border-white/15 px-4 py-2 md:hidden"
           >
-            <ul className="space-y-1 text-sm">
-              {isSportsSite() ? (
-                <>
-                  <li>
-                    <Link href="/ao-vivo" className="block py-2.5" onClick={() => setMenuOpen(false)}>
-                      Ao vivo
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/futebol" className="block py-2.5" onClick={() => setMenuOpen(false)}>
-                      Partidas
-                    </Link>
-                  </li>
-                  {getCompetitions().map((c) => (
-                    <li key={c.slug}>
-                      <Link
-                        href={`/liga/${c.slug}`}
-                        className="block py-2.5"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {c.name}
-                      </Link>
-                    </li>
-                  ))}
-                </>
-              ) : (
-                extra.map((l) => (
-                  <li key={l.href}>
-                    <Link href={l.href} className="block py-2.5" onClick={() => setMenuOpen(false)}>
-                      {l.label}
-                    </Link>
-                  </li>
-                ))
-              )}
-              {siteConfig.navCategories.map((c) => (
-                <li key={c.slug}>
+            <ul className="space-y-0.5 text-sm">
+              {mobileLinks.map((item) => (
+                <li key={item.href}>
                   <Link
-                    href={navHrefForSlug(c.slug)}
-                    className="block py-2.5"
+                    href={item.href}
+                    className="block py-2"
                     onClick={() => setMenuOpen(false)}
                   >
-                    {c.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}

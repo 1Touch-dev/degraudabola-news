@@ -19,14 +19,21 @@ function PlaceholderImage({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-2 bg-[linear-gradient(135deg,rgba(11,61,46,0.10),rgba(125,42,232,0.10))] text-center text-xs font-medium uppercase tracking-wider text-muted',
+        'relative flex flex-col items-center justify-center overflow-hidden bg-[linear-gradient(145deg,#071A14_0%,#146C43_60%,#0F2A20_100%)] text-center',
         className
       )}
     >
-      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-primary shadow-sm">
-        DB
+      <Image
+        src="/logo.png"
+        alt=""
+        width={72}
+        height={72}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[50%] w-[50%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.18]"
+        aria-hidden
+      />
+      <span className="relative z-10 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/70">
+        Sem imagem
       </span>
-      <span>Sem imagem</span>
     </div>
   );
 }
@@ -50,18 +57,18 @@ export default function ArticleCard({
     return (
       <article
         className={cn(
-          'group relative overflow-hidden rounded-[22px] border border-white/10 bg-slate-950 shadow-[0_18px_50px_rgba(15,23,42,0.22)] transition-transform duration-200 ease-out will-change-transform hover:-translate-y-1 motion-reduce:hover:translate-y-0',
+          'group relative overflow-hidden border border-black/15 bg-pitch-night shadow-elevated transition-transform duration-200 ease-out will-change-transform hover:-translate-y-1 motion-reduce:hover:translate-y-0',
           className
         )}
       >
         <Link href={href} className={cn('block', focusRing)}>
-          <div className="relative aspect-[16/9] w-full">
+          <div className="relative aspect-[16/9] w-full bg-pitch-night">
             {showImage ? (
               <Image
                 src={imageSrc}
                 alt=""
                 fill
-                className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:group-hover:scale-100"
+                className="object-contain transition-transform duration-300 ease-out group-hover:scale-[1.02] motion-reduce:group-hover:scale-100"
                 sizes="(max-width: 768px) 100vw, 66vw"
                 priority
                 onError={() => setImageFailed(true)}
@@ -69,17 +76,17 @@ export default function ArticleCard({
             ) : (
               <PlaceholderImage className="absolute inset-0" />
             )}
-            <div className="absolute inset-0 hidden bg-gradient-to-t from-black via-black/45 to-transparent md:block" />
+            <div className="absolute inset-0 hidden bg-gradient-to-t from-pitch-night via-pitch-night/55 to-transparent md:block" />
             <div className="absolute bottom-0 left-0 right-0 hidden p-4 md:block md:p-6">
-              <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white">
+              <span className="inline-flex items-center bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-pitch-night">
                 {article.category}
               </span>
               {article.isVideo && (
-                <span className="ml-2 inline-flex items-center rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-secondary">
+                <span className="ml-2 inline-flex items-center bg-live px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white">
                   Vídeo
                 </span>
               )}
-              <h2 className="mt-3 font-heading text-3xl font-bold leading-tight text-white md:text-4xl">
+              <h2 className="mt-3 font-display text-3xl uppercase leading-none tracking-wide text-white md:text-5xl">
                 {article.title}
               </h2>
               <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-relaxed text-white/80 md:text-base">
@@ -90,16 +97,16 @@ export default function ArticleCard({
               </p>
             </div>
           </div>
-          <div className="space-y-3 bg-white p-4 md:hidden">
-            <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+          <div className="space-y-3 bg-surface p-4 md:hidden">
+            <span className="inline-flex items-center bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
               {article.category}
             </span>
             {article.isVideo ? (
-              <span className="ml-2 inline-flex items-center rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+              <span className="ml-2 inline-flex items-center bg-live px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
                 Vídeo
               </span>
             ) : null}
-            <h2 className="break-words font-heading text-xl font-bold leading-tight text-foreground">
+            <h2 className="break-words font-display text-2xl uppercase leading-none text-foreground">
               {article.title}
             </h2>
             <p className="line-clamp-3 text-sm text-muted">{article.excerpt}</p>
@@ -114,9 +121,14 @@ export default function ArticleCard({
 
   if (variant === 'horizontal') {
     return (
-      <article className={cn('group rounded-[18px] border border-black/10 bg-white p-3 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]', className)}>
+      <article
+        className={cn(
+          'group border border-black/10 bg-surface p-3 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/40',
+          className
+        )}
+      >
         <Link href={href} className={cn('flex gap-3', focusRing)}>
-          <span className="relative h-20 w-28 shrink-0 overflow-hidden rounded-[14px] md:h-24 md:w-36">
+          <span className="relative h-20 w-28 shrink-0 overflow-hidden border border-black/5 bg-pitch-night md:h-24 md:w-36">
             {showImage ? (
               <Image
                 src={imageSrc}
@@ -131,10 +143,10 @@ export default function ArticleCard({
             )}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+            <span className="inline-flex items-center bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
               {article.category}
             </span>
-            <h3 className="mt-2 break-words font-heading text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary md:text-base">
+            <h3 className="mt-2 break-words font-heading text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary md:text-lg">
               {article.title}
             </h3>
             <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">{article.excerpt}</p>
@@ -152,17 +164,17 @@ export default function ArticleCard({
     return (
       <article
         className={cn(
-          'group flex items-start gap-3 rounded-2xl border border-black/5 bg-white px-3 py-3 shadow-sm transition-all hover:border-primary/20 hover:bg-primary/5',
+          'group flex items-start gap-3 border border-transparent bg-transparent px-3 py-3 transition-all hover:border-primary/20 hover:bg-primary/[0.04]',
           className
         )}
       >
         {rank !== undefined && (
-          <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-sm text-primary">
+          <span className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center border border-accent/40 bg-pitch-night font-display text-lg text-accent">
             {rank}
           </span>
         )}
         <Link href={href} className={cn('min-w-0 flex-1', focusRing)}>
-          <h3 className="text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+          <h3 className="font-heading text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
             {article.title}
           </h3>
           <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-muted">
@@ -176,12 +188,12 @@ export default function ArticleCard({
   return (
     <article
       className={cn(
-        'group rounded-[18px] border border-black/10 bg-white p-3 shadow-card transition-all duration-200 ease-out will-change-transform hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)] motion-reduce:hover:translate-y-0',
+        'group border border-black/10 bg-surface p-3 shadow-card transition-all duration-200 ease-out will-change-transform hover:-translate-y-1 motion-reduce:hover:translate-y-0',
         className
       )}
     >
       <Link href={href} className={cn('block', focusRing)}>
-        <div className="relative mb-3 aspect-[4/3] overflow-hidden rounded-[14px]">
+        <div className="relative mb-3 aspect-[4/3] overflow-hidden border border-black/5 bg-pitch-night">
           {showImage ? (
             <Image
               src={imageSrc}
@@ -195,15 +207,15 @@ export default function ArticleCard({
             <PlaceholderImage className="h-full w-full" />
           )}
           {article.isVideo && (
-            <span className="absolute bottom-2 left-2 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
+            <span className="absolute bottom-2 left-2 bg-live px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">
               Vídeo
             </span>
           )}
         </div>
-        <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+        <span className="inline-flex items-center bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
           {article.category}
         </span>
-        <h3 className="mt-2 font-heading text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+        <h3 className="mt-2 font-heading text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
           {article.title}
         </h3>
         <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-muted">

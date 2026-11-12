@@ -240,6 +240,7 @@ async function fetchLiveArticles(options?: {
     await loadPublicSiteConfig();
     const res = await fetch(articlesListUrl({ limit, endpoint }), {
       headers: { Accept: 'application/json' },
+      next: { revalidate: 60 },
     });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: unknown[] } | unknown[];
@@ -274,6 +275,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       await loadPublicSiteConfig();
       const res = await fetch(articleBySlugUrl(slug), {
         headers: { Accept: 'application/json' },
+        next: { revalidate: 60 },
       });
       if (res.ok) {
         const raw = (await res.json()) as Record<string, unknown>;

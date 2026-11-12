@@ -15,6 +15,7 @@ interface FallbackMediaProps {
   className?: string;
   fallbackClassName?: string;
   label?: string;
+  objectFit?: 'cover' | 'contain';
 }
 
 export default function FallbackMedia({
@@ -28,6 +29,7 @@ export default function FallbackMedia({
   className,
   fallbackClassName,
   label = 'Sem imagem',
+  objectFit = 'cover',
 }: FallbackMediaProps) {
   const [failed, setFailed] = useState(false);
 
@@ -35,15 +37,24 @@ export default function FallbackMedia({
     return (
       <div
         className={cn(
-          'flex h-full w-full flex-col items-center justify-center gap-3 bg-[linear-gradient(135deg,rgba(11,61,46,0.12),rgba(125,42,232,0.12))] text-center text-xs font-semibold uppercase tracking-[0.22em] text-muted',
+          'relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[linear-gradient(145deg,#071A14_0%,#146C43_55%,#0F2A20_100%)] text-center',
           fallbackClassName,
           className
         )}
+        role="img"
+        aria-label={label}
       >
-        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/80 font-heading text-sm text-primary shadow-sm">
-          DB
+        <Image
+          src="/logo.png"
+          alt=""
+          width={96}
+          height={96}
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[55%] w-[55%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.18]"
+          aria-hidden
+        />
+        <span className="relative z-10 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70">
+          {label}
         </span>
-        <span>{label}</span>
       </div>
     );
   }
@@ -57,7 +68,7 @@ export default function FallbackMedia({
       height={height}
       sizes={sizes}
       priority={priority}
-      className={className}
+      className={cn(objectFit === 'contain' ? 'object-contain' : 'object-cover', className)}
       onError={() => setFailed(true)}
     />
   );

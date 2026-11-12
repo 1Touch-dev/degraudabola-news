@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   metadataBase: siteConfig.seo.canonicalHost
     ? new URL(siteConfig.seo.canonicalHost)
     : undefined,
+  icons: {
+    icon: [{ url: '/logo.png', type: 'image/png' }],
+    apple: [{ url: '/logo.png', type: 'image/png' }],
+    shortcut: '/logo.png',
+  },
   openGraph: {
     title: siteConfig.siteName,
     description: siteConfig.description,

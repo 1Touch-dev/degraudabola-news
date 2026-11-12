@@ -1,14 +1,11 @@
 'use client';
 
 import AffiliateSections from '@/components/affiliate/AffiliateSections';
-
-
 import AffiliateBanner from '@/components/affiliate/AffiliateBanner';
 import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
-
-
 import Link from 'next/link';
 import type React from 'react';
+import { useEffect, useState } from 'react';
 import ArticleCard from '@/components/cards/ArticleCard';
 import MotionSection from '@/components/ui/MotionSection';
 import type { Article } from '@/lib/cms-client';
@@ -26,52 +23,131 @@ interface RecipeHomeProps {
   mostRead: Article[];
 }
 
-function TopBriefBar({ articles }: { articles: Article[] }) {
-  const items = articles.slice(0, 4);
-  const quickSearches = ['Série B', 'Tabela', 'Partidas', 'Transferências', 'Clubes'];
-  if (!items.length) return null;
-
+function LadderMasthead() {
   return (
-    <section className="overflow-hidden rounded-[22px] border border-black/10 bg-[linear-gradient(135deg,rgba(11,61,46,0.98)_0%,rgba(22,101,52,0.96)_100%)] text-white shadow-[0_18px_45px_rgba(11,61,46,0.22)]">
-      <div className="flex flex-col gap-4 p-4 md:p-5">
-        <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-emerald-200">Panorama do dia</p>
-            <h2 className="mt-1 font-display text-xl uppercase tracking-wide">Destaques do acesso</h2>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/busca"
-              className="inline-flex min-h-10 items-center rounded-full border border-white/15 bg-white/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-white hover:bg-white hover:text-[#0B3D2E]"
-            >
-              Buscar notícias
-            </Link>
-            <Link
-              href="/news"
-              className="inline-flex min-h-10 items-center rounded-full bg-white px-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#0B3D2E] hover:bg-emerald-50"
-            >
-              Ver cobertura
-            </Link>
-          </div>
+    <section className="relative overflow-hidden border border-black/10 bg-pitch-night text-white shadow-elevated">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_0%,rgba(240,180,41,0.28),transparent_42%),linear-gradient(120deg,rgba(20,108,67,0.35),transparent_55%)]" />
+      <div className="relative grid gap-6 px-4 py-6 md:grid-cols-[1.2fr_0.8fr] md:items-end md:px-6 md:py-8">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-accent">
+            Degrau da Bola · Série B
+          </p>
+          <h1 className="mt-2 max-w-2xl font-display text-4xl uppercase leading-[0.95] tracking-wide md:text-6xl">
+            Cada ponto, um degrau pro acesso
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
+            Cobertura da corrida pelo acesso: tabela, decisões, rebaixamento e o que move a
+            classificação.
+          </p>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {items.map((article, index) => (
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: 'Acesso', href: '/categoria/acesso' },
+            { label: 'Tabela', href: '/categoria/tabela' },
+            { label: 'Ao vivo', href: '/ao-vivo' },
+          ].map((item, index) => (
             <Link
-              key={article.id}
-              href={`/artigo/${article.slug}`}
-              className="rounded-[18px] border border-white/10 bg-white/5 p-4 transition hover:-translate-y-0.5 hover:bg-white/10"
+              key={item.href}
+              href={item.href}
+              className="group relative overflow-hidden border border-white/10 bg-white/5 p-3 transition hover:border-accent/50 hover:bg-white/10"
+              style={{ marginTop: `${(2 - index) * 10}px` }}
             >
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-200">
-                0{index + 1} · {article.category}
-              </p>
-              <h3 className="mt-2 line-clamp-3 font-heading text-sm font-semibold leading-snug text-white md:text-base">
-                {article.title}
-              </h3>
-              <p className="mt-3 text-[10px] uppercase tracking-[0.16em] text-white/70">
-                {article.author}
-              </p>
+              <span className="block h-1 w-full bg-gradient-to-r from-primary via-success to-accent" />
+              <span className="mt-3 block font-display text-xl uppercase tracking-wide">{item.label}</span>
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.18em] text-white/55">
+                Degrau {index + 1}
+              </span>
             </Link>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroCarousel({ articles }: { articles: Article[] }) {
+  const slides = articles.slice(0, 5);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % slides.length);
+    }, 5600);
+    return () => window.clearInterval(timer);
+  }, [slides.length]);
+
+  if (!slides.length) {
+    return (
+      <div className="flex min-h-[280px] items-center justify-center bg-pitch-night/5 px-4 py-10 text-center">
+        <p className="text-sm text-muted">Nenhum destaque disponível no momento.</p>
+      </div>
+    );
+  }
+
+  const active = slides[index] || slides[0];
+
+  return (
+    <section className="relative overflow-hidden bg-pitch-night text-white">
+      <div className="relative min-h-[320px] md:min-h-[440px]">
+        <FallbackMedia
+          key={active.id}
+          src={active.imageUrl}
+          alt=""
+          fill
+          priority
+          objectFit="contain"
+          className="absolute inset-0 h-full w-full opacity-90"
+          fallbackClassName="absolute inset-0"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-pitch-night via-pitch-night/80 to-pitch-night/25" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(240,180,41,0.22),transparent_40%)]" />
+
+        <div className="relative z-10 flex h-full min-h-[320px] flex-col justify-end gap-5 p-5 md:min-h-[440px] md:p-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <p className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-accent">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-live" />
+              Holofote · {active.category || 'Destaque'}
+            </p>
+            <Link
+              href={`/artigo/${active.slug}`}
+              className="mt-3 block font-display text-3xl uppercase leading-[0.95] tracking-wide hover:text-accent md:text-5xl lg:text-6xl"
+            >
+              {active.title}
+            </Link>
+            {active.excerpt ? (
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75 md:text-base">
+                {active.excerpt}
+              </p>
+            ) : null}
+            <Link
+              href={`/artigo/${active.slug}`}
+              className="mt-5 inline-flex min-h-11 items-center bg-accent px-5 text-xs font-bold uppercase tracking-[0.18em] text-pitch-night hover:bg-white"
+            >
+              Ler agora
+            </Link>
+          </div>
+
+          <div className="flex w-full max-w-md flex-col gap-2 lg:w-72">
+            {slides.map((slide, slideIndex) => (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => setIndex(slideIndex)}
+                className={`flex items-start gap-3 border px-3 py-2 text-left transition ${
+                  slideIndex === index
+                    ? 'border-accent bg-accent/15'
+                    : 'border-white/10 bg-black/25 hover:border-white/30'
+                }`}
+              >
+                <span className="font-display text-lg text-accent">{String(slideIndex + 1).padStart(2, '0')}</span>
+                <span className="line-clamp-2 text-xs font-semibold leading-snug text-white/90">
+                  {slide.title}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -359,13 +435,30 @@ function HeroCoverDuo({ articles }: { articles: Article[] }) {
 
 function RankedRail({ articles }: { articles: Article[] }) {
   return (
-    <div className="rounded border border-black/10 bg-surface p-3">
-      <h2 className="mb-2 border-b-2 border-primary pb-1 font-display text-lg uppercase tracking-wide text-secondary">
-        Ao vivo
-      </h2>
-      {articles.map((article, i) => (
-        <ArticleCard key={article.id} article={article} variant="rail" rank={i + 1} />
-      ))}
+    <div>
+      <div className="mb-4 flex items-end justify-between gap-3 border-b border-black/10 pb-3">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Escada do dia</p>
+          <h2 className="mt-1 font-display text-2xl uppercase tracking-wide text-secondary">
+            Degraus quentes
+          </h2>
+        </div>
+        <Link href="/ultimas" className="text-xs font-bold uppercase tracking-[0.16em] text-primary hover:underline">
+          Ver fila
+        </Link>
+      </div>
+      <ol className="space-y-0 border-l-4 border-accent/80 pl-0">
+        {articles.map((article, i) => (
+          <li key={article.id} className="relative border-b border-black/5 last:border-b-0">
+            <div
+              className="absolute -left-[4px] top-0 h-full w-1 bg-primary"
+              style={{ opacity: 1 - i * 0.12 }}
+              aria-hidden
+            />
+            <ArticleCard article={article} variant="rail" rank={i + 1} />
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
@@ -403,21 +496,26 @@ function CategoryRail({ articles }: { articles: Article[] }) {
 function HorizontalStream({ articles }: { articles: Article[] }) {
   return (
     <section>
-      <div className="mb-4 flex items-center justify-between gap-3 border-b border-black/5 pb-3">
+      <div className="mb-4 flex items-end justify-between gap-3 border-b-2 border-secondary pb-3">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Cobertura</p>
-          <h2 className="mt-1 font-display text-xl uppercase tracking-wide text-secondary">Últimas</h2>
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Linha de passe</p>
+          <h2 className="mt-1 font-display text-2xl uppercase tracking-wide text-secondary">Últimas jogadas</h2>
         </div>
-        <Link href="/news" className="text-xs font-semibold uppercase tracking-[0.18em] text-primary hover:underline">
-          Ver tudo
+        <Link href="/news" className="text-xs font-bold uppercase tracking-[0.18em] text-primary hover:underline">
+          Arquivo
         </Link>
       </div>
-      <div className="space-y-3">
-        {articles.map((article) => (
-          <div key={article.id}>
-            <ArticleCard article={article} variant="horizontal" />
-          </div>
-        ))}
+      <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-3">
+          {articles.slice(0, 3).map((article) => (
+            <ArticleCard key={article.id} article={article} variant="horizontal" />
+          ))}
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1">
+          {articles.slice(3, 6).map((article) => (
+            <ArticleCard key={article.id} article={article} variant="compact" />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -480,20 +578,23 @@ function DiscoveryChips() {
       }));
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between gap-3 border-b border-black/5 pb-3">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Navegação</p>
-          <h2 className="mt-1 font-heading text-lg text-secondary">Explore rapidamente</h2>
-        </div>
+      <div className="mb-4 border-b border-black/10 pb-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Portões do estádio</p>
+        <h2 className="mt-1 font-display text-2xl uppercase tracking-wide text-secondary">
+          Entre pela seção
+        </h2>
       </div>
-      <div className="flex flex-wrap gap-2.5">
-        {chips.map((chip) => (
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        {chips.map((chip, index) => (
           <Link
             key={chip.href}
             href={chip.href}
-            className="rounded-full border border-black/10 bg-surface px-4 py-2 text-xs font-bold uppercase tracking-wide text-secondary shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+            className="group border border-black/10 bg-surface px-3 py-4 transition hover:border-primary hover:bg-primary hover:text-white"
           >
-            {chip.name}
+            <span className="block font-display text-xs uppercase tracking-[0.2em] text-accent group-hover:text-white/80">
+              Gate {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="mt-2 block font-heading text-lg uppercase leading-none">{chip.name}</span>
           </Link>
         ))}
       </div>
@@ -503,28 +604,36 @@ function DiscoveryChips() {
 
 function MostReadPanel({ articles }: { articles: Article[] }) {
   return (
-    <div className="rounded-[20px] bg-gradient-to-br from-white via-white to-slate-50 p-4 md:p-5">
-      <div className="mb-4 border-b border-black/5 pb-3">
-        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Audiência</p>
-        <h2 className="mt-1 font-display text-lg uppercase tracking-wide text-primary">Mais lidas</h2>
+    <div className="border border-black/10 bg-[linear-gradient(180deg,#fbfcfa_0%,#eef5f0_100%)] p-4 md:p-5">
+      <div className="mb-4 border-b border-black/10 pb-3">
+        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">Torcida</p>
+        <h2 className="mt-1 font-display text-xl uppercase tracking-wide text-secondary">
+          Degraus mais lidos
+        </h2>
       </div>
-      {articles.map((article, i) => (
-        <ArticleCard key={article.id} article={article} variant="rail" rank={i + 1} />
-      ))}
+      <div className="space-y-2">
+        {articles.map((article, i) => (
+          <ArticleCard key={article.id} article={article} variant="rail" rank={i + 1} />
+        ))}
+      </div>
     </div>
   );
 }
 
 function NewsletterCard() {
   return (
-    <div className="rounded bg-secondary p-4 text-white">
-      <p className="text-xs font-bold uppercase tracking-widest text-accent">Newsletter</p>
-      <p className="mt-2 text-sm text-white/80">
-        Receba as principais notícias de {siteConfig.siteName} no seu e-mail.
+    <div className="relative overflow-hidden border border-accent/30 bg-pitch-night p-5 text-white">
+      <div className="pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full border-4 border-accent/40" />
+      <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">Boletim do acesso</p>
+      <p className="mt-2 font-display text-2xl uppercase leading-none">
+        Receba a classificação no e-mail
+      </p>
+      <p className="mt-3 text-sm text-white/70">
+        Alertas da Série B, decisões e a corrida pelo acesso — direto da redação {siteConfig.siteName}.
       </p>
       <Link
         href="/contact"
-        className="mt-3 inline-block rounded bg-primary px-4 py-2 text-xs font-bold uppercase"
+        className="mt-4 inline-flex min-h-11 items-center bg-accent px-4 text-xs font-bold uppercase tracking-[0.16em] text-pitch-night hover:bg-white"
       >
         Inscrever-se
       </Link>
@@ -539,22 +648,40 @@ function DualSection({ articles }: { articles: Article[] }) {
   const primary = siteConfig.navCategories[0];
   const secondary = siteConfig.navCategories[1];
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <section className="rounded-lg border border-black/10 bg-white p-4">
-        <h2 className="mb-3 font-heading text-sm font-bold uppercase">
-          {primary?.name || 'Destaques'}
-        </h2>
-        {left.map((a) => (
-          <ArticleCard key={a.id} article={a} variant="horizontal" />
-        ))}
+    <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+      <section className="border border-black/10 bg-surface">
+        <div className="flex items-center justify-between border-b-4 border-primary bg-secondary px-4 py-3 text-white">
+          <h2 className="font-display text-xl uppercase tracking-wide">
+            {primary?.name || 'Destaques'}
+          </h2>
+          {primary ? (
+            <Link href={`/categoria/${primary.slug}`} className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
+              Abrir
+            </Link>
+          ) : null}
+        </div>
+        <div className="space-y-2 p-3">
+          {left.map((a) => (
+            <ArticleCard key={a.id} article={a} variant="horizontal" />
+          ))}
+        </div>
       </section>
-      <section className="rounded-lg border border-black/10 bg-white p-4">
-        <h2 className="mb-3 font-heading text-sm font-bold uppercase">
-          {secondary?.name || 'Mais'}
-        </h2>
-        {right.map((a) => (
-          <ArticleCard key={a.id} article={a} variant="horizontal" />
-        ))}
+      <section className="border border-black/10 bg-surface">
+        <div className="flex items-center justify-between border-b-4 border-accent bg-pitch-night px-4 py-3 text-white">
+          <h2 className="font-display text-xl uppercase tracking-wide">
+            {secondary?.name || 'Mais'}
+          </h2>
+          {secondary ? (
+            <Link href={`/categoria/${secondary.slug}`} className="text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
+              Abrir
+            </Link>
+          ) : null}
+        </div>
+        <div className="space-y-2 p-3">
+          {right.map((a) => (
+            <ArticleCard key={a.id} article={a} variant="horizontal" />
+          ))}
+        </div>
       </section>
     </div>
   );
@@ -595,6 +722,9 @@ function renderBlock(
 
   let node: React.ReactNode = null;
   switch (resolved.block) {
+    case 'HeroCarousel':
+      node = <HeroCarousel articles={items} />;
+      break;
     case 'HeroLead':
       node = <HeroLead articles={items} />;
       break;
@@ -675,13 +805,13 @@ function renderBlock(
 function shellClass(recipe: HomepageRecipe): string {
   switch (recipe.grid) {
     case 'mosaic-12':
-      return 'mx-auto max-w-7xl space-y-6 px-4 py-6 md:py-8';
+      return 'mx-auto max-w-7xl space-y-6 px-3 py-5 md:px-4 md:py-8';
     case 'scoreboard-split':
-      return 'mx-auto max-w-7xl space-y-5 px-4 py-5 md:py-8';
+      return 'mx-auto max-w-7xl space-y-5 px-3 py-5 md:px-4 md:py-7';
     case 'main-sidebar':
-      return 'mx-auto max-w-7xl space-y-5 px-4 py-5 md:py-8';
+      return 'mx-auto max-w-7xl space-y-5 px-3 py-5 md:px-4 md:py-7';
     default:
-      return 'mx-auto max-w-6xl space-y-6 px-4 py-8';
+      return 'mx-auto max-w-6xl space-y-6 px-3 py-7 md:px-4';
   }
 }
 
@@ -691,21 +821,20 @@ function sectionChromeClass(slot: RecipeSlot, featured = false): string {
 
   if (isHero) {
     return [
-      'overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]',
-      featured ? 'ring-1 ring-primary/15' : '',
+      'overflow-hidden border border-black/15 bg-pitch-night shadow-elevated',
+      featured ? 'ring-1 ring-accent/25' : '',
     ]
       .filter(Boolean)
       .join(' ');
   }
 
   if (isUtility) {
-    return 'overflow-hidden rounded-[20px] border border-black/10 bg-white/95 shadow-card';
+    return 'overflow-hidden border border-black/10 bg-surface/95 shadow-card';
   }
 
   return [
-    'overflow-hidden rounded-[22px] border border-black/10 bg-white shadow-card transition-shadow duration-200',
-    'hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]',
-    featured ? 'ring-1 ring-primary/10' : '',
+    'overflow-hidden border border-black/10 bg-surface shadow-card',
+    featured ? 'ring-1 ring-primary/15' : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -714,6 +843,7 @@ function sectionChromeClass(slot: RecipeSlot, featured = false): string {
 function sectionInnerClass(slot: RecipeSlot): string {
   if (slot.kind === 'hero') return 'p-0';
   if (slot.kind === 'scoreboard') return 'p-3 md:p-4';
+  if (slot.kind === 'newsletter' || slot.kind === 'most-read') return 'p-0';
   return 'p-4 md:p-5';
 }
 
@@ -753,9 +883,11 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
 
   if (useMagazineShell) {
     return (
-      <div className="mx-auto max-w-3xl space-y-10 px-4 py-12 md:py-16">
-        <TopBriefBar articles={articles} />
-        {recipe.slots.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+      <div className="mx-auto max-w-3xl space-y-8 px-3 py-10 md:px-4 md:py-14">
+        <LadderMasthead />
+        {recipe.slots.map((slot, index) =>
+          renderSlotCard(slot, articles, mostRead, cursor, index === 0)
+        )}
       </div>
     );
   }
@@ -764,13 +896,15 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
     const main = recipe.slots.filter((s) => !sidebarKinds.has(s.kind));
     const side = recipe.slots.filter((s) => sidebarKinds.has(s.kind));
     return (
-      <div className="bg-surface/80">
-        <div className="mx-auto max-w-7xl space-y-4 px-4 py-6">
-          <TopBriefBar articles={articles} />
+      <div>
+        <div className="mx-auto max-w-7xl space-y-4 px-3 py-5 md:px-4 md:py-6">
+          <LadderMasthead />
           <div className="grid gap-4 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-8">
               <AffiliateSections enabled={articles.length >= 6}>
-                {main.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+                {main.map((slot, index) =>
+                  renderSlotCard(slot, articles, mostRead, cursor, index === 0)
+                )}
               </AffiliateSections>
             </div>
             <aside className="space-y-4 lg:col-span-4">
@@ -784,18 +918,26 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
   }
 
   if (useSidebar) {
-    const main = recipe.slots.filter((s) => !sidebarKinds.has(s.kind));
+    const heroSlots = recipe.slots.filter((s) => s.kind === 'hero' || s.kind === 'scoreboard');
+    const main = recipe.slots.filter(
+      (s) => !sidebarKinds.has(s.kind) && s.kind !== 'hero' && s.kind !== 'scoreboard'
+    );
     const side = recipe.slots.filter((s) => sidebarKinds.has(s.kind));
     return (
       <div className={shellClass(recipe)}>
-        <TopBriefBar articles={articles} />
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <LadderMasthead />
+        <div className="space-y-4">
+          {heroSlots.map((slot, index) =>
+            renderSlotCard(slot, articles, mostRead, cursor, index === 0)
+          )}
+        </div>
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
           <div className="space-y-4">
             <AffiliateSections enabled={articles.length >= 6}>
-              {main.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+              {main.map((slot) => renderSlotCard(slot, articles, mostRead, cursor))}
             </AffiliateSections>
           </div>
-          <aside className="space-y-4 lg:sticky lg:top-4">
+          <aside className="space-y-4 lg:sticky lg:top-20">
             {articles.length >= 6 && <AffiliateBanner preset="card" />}
             {side.map((slot) => renderSlotCard(slot, articles, mostRead, cursor))}
           </aside>
@@ -806,9 +948,11 @@ export default function RecipeHome({ articles, mostRead }: RecipeHomeProps) {
 
   return (
     <div className={shellClass(recipe)}>
-      <TopBriefBar articles={articles} />
+      <LadderMasthead />
       <AffiliateSections enabled={articles.length >= 6}>
-        {recipe.slots.map((slot, index) => renderSlotCard(slot, articles, mostRead, cursor, index === 0))}
+        {recipe.slots.map((slot, index) =>
+          renderSlotCard(slot, articles, mostRead, cursor, index === 0)
+        )}
       </AffiliateSections>
     </div>
   );

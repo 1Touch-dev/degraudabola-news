@@ -16,6 +16,9 @@ module.exports = {
         foreground: 'var(--color-text)',
         muted: 'var(--color-muted-text)',
         success: 'var(--color-success)',
+        'pitch-night': 'var(--color-pitch-night)',
+        floodlight: 'var(--color-floodlight)',
+        live: 'var(--color-live)',
       },
       fontFamily: {
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],

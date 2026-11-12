@@ -3,13 +3,14 @@ import { siteConfig } from '@/lib/site-config';
 import { resolveChrome } from '@/lib/chrome';
 import { cn } from '@/lib/utils';
 import { articleNavCategories, getCompetitions, isSportsSite } from '@/lib/competitions';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 const year = () => new Date().getFullYear();
 
 export function SportsClubhouseFooter() {
   const cfg = resolveChrome().footer;
   return (
-    <footer className="mt-auto bg-[#0B3D2E] text-white">
+    <footer className="mt-auto border-t border-accent/20 bg-pitch-night text-white">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div
           className={cn(
@@ -20,18 +21,27 @@ export function SportsClubhouseFooter() {
           )}
         >
           <div>
-            <p className="font-display text-4xl uppercase tracking-wide">
-              {siteConfig.siteName}
-            </p>
-            <p className="mt-2 max-w-md text-sm text-white/70">
+            <BrandLogo
+              textClassName="font-display text-3xl uppercase tracking-wide md:text-4xl"
+              showTagline={false}
+            />
+            <p className="mt-3 max-w-md text-sm text-white/70">
               {siteConfig.tagline || siteConfig.description}
             </p>
             {cfg.showAppPromotion ? (
               <Link
                 href="/ao-vivo"
-                className="mt-4 inline-flex min-h-11 items-center rounded bg-[#E11D48] px-4 text-xs font-bold uppercase"
+                className="mt-4 inline-flex min-h-11 items-center bg-live px-4 text-xs font-bold uppercase"
               >
                 Ver placar ao vivo
+              </Link>
+            ) : null}
+            {cfg.showNewsletter ? (
+              <Link
+                href="/contact"
+                className="ml-2 mt-4 inline-flex min-h-11 items-center bg-accent px-4 text-xs font-bold uppercase text-pitch-night"
+              >
+                Boletim
               </Link>
             ) : null}
           </div>

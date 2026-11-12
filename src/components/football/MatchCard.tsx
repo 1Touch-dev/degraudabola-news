@@ -120,7 +120,7 @@ export default function MatchCard({
       className={cn(
         'rounded-xl border border-black/[0.08] bg-white px-4 py-3.5 transition-colors duration-150',
         'hover:border-primary/40',
-        live && 'border-primary/30 bg-[#0B3D2E] text-white hover:border-accent/50'
+        live && 'border-accent/40 bg-pitch-night text-white hover:border-accent'
       )}
     >
       <div className="flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-wide">

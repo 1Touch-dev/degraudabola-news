@@ -7,7 +7,7 @@ const absoluteSiteHref = new RegExp(
 );
 
 export const BANNER_FRAME_CLASS =
-  'aspect-[2.2/1] min-h-[160px] w-full overflow-hidden sm:min-h-[200px] md:min-h-[240px]';
+  'aspect-[21/9] min-h-[180px] w-full overflow-hidden bg-[var(--color-pitch-night,#071A14)] sm:min-h-[220px] md:min-h-[280px]';
 
 export function sameSitePath(href: string): string | null {
   const trimmed = href.trim();
@@ -44,19 +44,22 @@ export function sanitizeBannerHtml(html: string): string {
     .replace(/(href|src)\s*=\s*(["'])\s*javascript:[\s\S]*?\2/gi, '$1=$2#$2');
 }
 
-/** Fit one slide into the hero frame — CMS HTML often stacks many `.banner-slide`s. */
+/** Fit one slide into the hero frame — prefer full image, avoid harsh cropping. */
 export const BANNER_FIT_STYLE = `<style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;max-width:100%;overflow:hidden!important;background:#0B3D2E}
+html,body{margin:0;width:100%;height:100%;max-width:100%;overflow:hidden!important;background:#071A14}
 .banner-slider,.banner-slide,.banner-link,.banner-image-wrapper{
   height:100%!important;width:100%!important;max-width:100%!important;max-height:100%!important;
   aspect-ratio:auto!important;margin:0!important;border:0!important;
-  border-radius:0!important;box-shadow:none!important;overflow:hidden!important
+  border-radius:0!important;box-shadow:none!important;overflow:hidden!important;
+  display:flex!important;align-items:center!important;justify-content:center!important
 }
-.banner-image-wrapper img,.banner-slide img{width:100%!important;height:100%!important;object-fit:cover!important;display:block}
+.banner-image-wrapper img,.banner-slide img,img{
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center center!important;display:block
+}
 .banner-overlay,.banner-content,.banner-text{max-width:100%;overflow:hidden}
 .banner-slide ~ .banner-slide{display:none!important}
-img,video{max-width:100%;display:block}
 </style>`;
 
 /** Rewrite same-site article links to `/artigo/...` and open in top window. */

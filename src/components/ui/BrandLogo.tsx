@@ -22,37 +22,50 @@ export default function BrandLogo({
   showTagline = true,
 }: BrandLogoProps) {
   const [failed, setFailed] = useState(false);
-  const initials = siteConfig.siteName
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+
+  const compact = !showTagline;
 
   return (
-    <Link href={href} className={cn('flex min-w-0 items-center gap-3', className)}>
+    <Link href={href} className={cn('flex min-w-0 items-center', compact ? 'gap-2' : 'gap-3', className)}>
       {!failed ? (
-        <span className="relative inline-flex size-12 shrink-0 items-center justify-center rounded-[18px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),rgba(255,255,255,0.05))] shadow-[0_12px_28px_rgba(15,23,42,0.18)] backdrop-blur-sm">
-          <span className="absolute inset-0 rounded-[18px] bg-[linear-gradient(135deg,rgba(46,125,50,0.18),rgba(125,42,232,0.10))]" />
+        <span
+          className={cn(
+            'relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-accent/30 bg-pitch-night shadow-[0_0_0_1px_rgba(240,180,41,0.15)]',
+            compact ? 'size-9' : 'size-12'
+          )}
+        >
+          <span className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(240,180,41,0.35),transparent_55%)]" />
           <Image
             src="/logo.png"
             alt={`Logo ${siteConfig.siteName}`}
-            width={40}
-            height={40}
-            className={cn('relative z-10 size-10 shrink-0 object-contain', imageClassName)}
+            width={compact ? 28 : 40}
+            height={compact ? 28 : 40}
+            className={cn(
+              'relative z-10 shrink-0 object-contain',
+              compact ? 'size-7' : 'size-10',
+              imageClassName
+            )}
             priority
             onError={() => setFailed(true)}
           />
         </span>
       ) : (
-        <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-[18px] border border-primary/15 bg-[linear-gradient(135deg,rgba(46,125,50,0.16),rgba(125,42,232,0.12))] font-heading text-sm font-bold text-primary shadow-[0_12px_28px_rgba(15,23,42,0.12)]">
-          {initials}
+        <span
+          className={cn(
+            'inline-flex shrink-0 items-center justify-center rounded-md border border-accent/30 bg-pitch-night font-display text-sm font-bold text-accent',
+            compact ? 'size-9' : 'size-12'
+          )}
+          aria-hidden
+        >
+          DB
         </span>
       )}
       <span className="min-w-0">
-        <p className={cn('truncate font-semibold', textClassName)}>{siteConfig.siteName}</p>
+        <p className={cn('truncate font-display uppercase tracking-[0.04em]', textClassName)}>
+          {siteConfig.siteName}
+        </p>
         {showTagline && siteConfig.tagline ? (
-          <p className="truncate text-[10px] uppercase tracking-[0.24em] text-current/65">
+          <p className="truncate text-[10px] uppercase tracking-[0.2em] text-current/65">
             {siteConfig.tagline}
           </p>
         ) : null}

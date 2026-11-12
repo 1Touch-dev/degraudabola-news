@@ -3,7 +3,6 @@ import Header from '@/components/chrome/Header';
 import CategoryNav from '@/components/chrome/CategoryNav';
 import BreakingNews from '@/components/chrome/BreakingNews';
 import AlertsRail from '@/components/chrome/AlertsRail';
-import SearchCommand from '@/components/search/SearchCommand';
 import { resolveChrome } from '@/lib/chrome';
 import { hasCapability } from '@/lib/capabilities';
 
@@ -34,13 +33,6 @@ export default function ChromeHost({ headlines, alerts }: ChromeHostProps) {
     <div className="w-full min-w-0">
       {chrome.breakingPosition === 'top' ? breaking : null}
       <Header />
-      {hasCapability('search') ? (
-        <div className="pointer-events-none fixed bottom-4 right-4 z-[90] md:hidden">
-          <div className="pointer-events-auto">
-            <SearchCommand />
-          </div>
-        </div>
-      ) : null}
       {showNav ? <CategoryNav /> : null}
       {chrome.breakingPosition === 'below-nav' ? breaking : null}
       {hasCapability('alerts-rail') ? <AlertsRail alerts={alerts} /> : null}
