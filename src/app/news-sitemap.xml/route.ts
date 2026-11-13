@@ -1,4 +1,4 @@
-import { getLatestArticles } from "@/lib/cms-client";
+import { getAllPublishedArticles } from "@/lib/cms-client";
 import { siteConfig } from "@/lib/site-config";
 import { absoluteUrl } from "@/lib/site-url";
 import { escapeXml } from "@/lib/xml";
@@ -9,7 +9,7 @@ const TWO_DAYS = 2 * 24 * 60 * 60 * 1000;
 
 export const GET = async () => {
   const cutoff = Date.now() - TWO_DAYS;
-  const items = (await getLatestArticles(200))
+  const items = (await getAllPublishedArticles(5, 50))
     .filter((article) => new Date(article.publishedAt).getTime() >= cutoff)
     .map((article) => {
       const loc = absoluteUrl(`/artigo/${article.slug}`);

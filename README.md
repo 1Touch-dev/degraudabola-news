@@ -33,4 +33,4 @@ Design tokens in `generated/design-tokens.css` are overwritten by the assembler.
 
 ## CMS
 
-`src/lib/cms-client.ts` returns dummy PT-BR data. Assembler replaces with live CMS integration.
+Articles load from `https://api.degraudabola.com/api/ai-articles` with `targetWebsite=degraudabola.com` (`endpoint=HomePage` and section endpoints).

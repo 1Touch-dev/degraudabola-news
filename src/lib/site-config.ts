@@ -162,8 +162,8 @@ export const siteConfig: SiteConfig = {
   description: "Cada ponto, um passo pro acesso",
   locale: {"language":"pt","dialect":"pt-BR","timezone":"America/Sao_Paulo"},
   cms: {
-    baseUrl: process.env.NEXT_PUBLIC_CMS_URL || 'https://api.football360brazil.com/api',
-    websiteKey: "degraudabola",
+    baseUrl: process.env.NEXT_PUBLIC_CMS_URL || 'https://api.degraudabola.com/api',
+    websiteKey: process.env.NEXT_PUBLIC_CMS_WEBSITE || 'degraudabola.com',
     collections: ["feed_brazil","aiarticles"],
   },
   seo: {
@@ -389,8 +389,8 @@ export const siteConfig: SiteConfig = {
     "FOOTBALL_TEAMS": "/football/teams?league=72&season=2026",
     "FOOTBALL_LEAGUES": "/football/leagues",
     "MARKETS": "TODO_MARKETS_API",
-    "ARTICLES_LIST": "/ai-articles?targetWebsite=degraudabola&page=1&limit=20",
-    "ARTICLE_BY_SLUG": "/ai-articles/slug/{slug}",
-    "BANNERS": "/banners/public/degraudabola"
+    "ARTICLES_LIST": "/ai-articles?targetWebsite=degraudabola.com&endpoint=HomePage&limit=20&page=1&sort=createdAt&order=desc",
+    "ARTICLE_BY_SLUG": "/ai-articles/slug/{slug}?targetWebsite=degraudabola.com",
+    "BANNERS": "/banners/public/degraudabola.com"
   },
 };

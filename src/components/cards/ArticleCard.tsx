@@ -7,11 +7,13 @@ import type { Article } from '@/lib/cms-client';
 import { formatRelativeDatePtBr, cn } from '@/lib/utils';
 
 export type ArticleCardVariant = 'lead' | 'horizontal' | 'compact' | 'rail';
+export type ArticleCardTone = 'light' | 'dark';
 
 interface ArticleCardProps {
   article: Article;
   variant?: ArticleCardVariant;
   rank?: number;
+  tone?: ArticleCardTone;
   className?: string;
 }
 
@@ -46,12 +48,14 @@ export default function ArticleCard({
   article,
   variant = 'compact',
   rank,
+  tone = 'light',
   className,
 }: ArticleCardProps) {
   const href = `/artigo/${article.slug}`;
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = !!article.imageUrl && !imageFailed;
   const imageSrc = article.imageUrl || '';
+  const dark = tone === 'dark';
 
   if (variant === 'lead') {
     return (
@@ -123,12 +127,20 @@ export default function ArticleCard({
     return (
       <article
         className={cn(
-          'group border border-black/10 bg-surface p-3 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/40',
+          'group p-3 transition-all hover:-translate-y-0.5',
+          dark
+            ? 'border border-white/12 bg-white/[0.04] hover:border-accent/45 hover:bg-white/[0.07]'
+            : 'border border-black/10 bg-surface shadow-card hover:border-primary/40',
           className
         )}
       >
         <Link href={href} className={cn('flex gap-3', focusRing)}>
-          <span className="relative h-20 w-28 shrink-0 overflow-hidden border border-black/5 bg-pitch-night md:h-24 md:w-36">
+          <span
+            className={cn(
+              'relative h-20 w-28 shrink-0 overflow-hidden bg-pitch-night md:h-24 md:w-36',
+              dark ? 'border border-white/10' : 'border border-black/5'
+            )}
+          >
             {showImage ? (
               <Image
                 src={imageSrc}
@@ -143,14 +155,38 @@ export default function ArticleCard({
             )}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="inline-flex items-center bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+            <span
+              className={cn(
+                'inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]',
+                dark ? 'bg-accent/15 text-accent' : 'bg-primary/10 text-primary'
+              )}
+            >
               {article.category}
             </span>
-            <h3 className="mt-2 break-words font-heading text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary md:text-lg">
+            <h3
+              className={cn(
+                'mt-2 break-words font-heading text-base font-semibold leading-snug transition-colors md:text-lg',
+                dark
+                  ? 'text-white group-hover:text-accent'
+                  : 'text-foreground group-hover:text-primary'
+              )}
+            >
               {article.title}
             </h3>
-            <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted">{article.excerpt}</p>
-            <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-muted">
+            <p
+              className={cn(
+                'mt-1.5 line-clamp-2 text-xs leading-relaxed',
+                dark ? 'text-white/60' : 'text-muted'
+              )}
+            >
+              {article.excerpt}
+            </p>
+            <p
+              className={cn(
+                'mt-2 text-[10px] uppercase tracking-[0.16em]',
+                dark ? 'text-white/40' : 'text-muted'
+              )}
+            >
               {formatRelativeDatePtBr(article.publishedAt)}
               {article.isVideo && ' · Vídeo'}
             </p>
@@ -164,7 +200,10 @@ export default function ArticleCard({
     return (
       <article
         className={cn(
-          'group flex items-start gap-3 border border-transparent bg-transparent px-3 py-3 transition-all hover:border-primary/20 hover:bg-primary/[0.04]',
+          'group flex items-start gap-3 border border-transparent bg-transparent px-3 py-3 transition-all',
+          dark
+            ? 'hover:border-accent/25 hover:bg-white/[0.04]'
+            : 'hover:border-primary/20 hover:bg-primary/[0.04]',
           className
         )}
       >
@@ -174,10 +213,17 @@ export default function ArticleCard({
           </span>
         )}
         <Link href={href} className={cn('min-w-0 flex-1', focusRing)}>
-          <h3 className="font-heading text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+          <h3
+            className={cn(
+              'font-heading text-base font-semibold leading-snug transition-colors',
+              dark
+                ? 'text-white group-hover:text-accent'
+                : 'text-foreground group-hover:text-primary'
+            )}
+          >
             {article.title}
           </h3>
-          <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-muted">
+          <p className={cn('mt-1 text-[10px] uppercase tracking-[0.16em]', dark ? 'text-white/45' : 'text-muted')}>
             {article.category} · {formatRelativeDatePtBr(article.publishedAt)}
           </p>
         </Link>
@@ -188,12 +234,20 @@ export default function ArticleCard({
   return (
     <article
       className={cn(
-        'group border border-black/10 bg-surface p-3 shadow-card transition-all duration-200 ease-out will-change-transform hover:-translate-y-1 motion-reduce:hover:translate-y-0',
+        'group p-3 transition-all duration-200 ease-out will-change-transform hover:-translate-y-1 motion-reduce:hover:translate-y-0',
+        dark
+          ? 'border border-white/12 bg-white/[0.04] hover:border-accent/45'
+          : 'border border-black/10 bg-surface shadow-card',
         className
       )}
     >
       <Link href={href} className={cn('block', focusRing)}>
-        <div className="relative mb-3 aspect-[4/3] overflow-hidden border border-black/5 bg-pitch-night">
+        <div
+          className={cn(
+            'relative mb-3 aspect-[4/3] overflow-hidden bg-pitch-night',
+            dark ? 'border border-white/10' : 'border border-black/5'
+          )}
+        >
           {showImage ? (
             <Image
               src={imageSrc}
@@ -212,13 +266,25 @@ export default function ArticleCard({
             </span>
           )}
         </div>
-        <span className="inline-flex items-center bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+        <span
+          className={cn(
+            'inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]',
+            dark ? 'bg-accent/15 text-accent' : 'bg-primary/10 text-primary'
+          )}
+        >
           {article.category}
         </span>
-        <h3 className="mt-2 font-heading text-base font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
+        <h3
+          className={cn(
+            'mt-2 font-heading text-base font-semibold leading-snug transition-colors',
+            dark
+              ? 'text-white group-hover:text-accent'
+              : 'text-foreground group-hover:text-primary'
+          )}
+        >
           {article.title}
         </h3>
-        <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-muted">
+        <p className={cn('mt-2 text-[10px] uppercase tracking-[0.16em]', dark ? 'text-white/40' : 'text-muted')}>
           {formatRelativeDatePtBr(article.publishedAt)}
         </p>
       </Link>

@@ -23,7 +23,7 @@ export const articleEndpoints: IArticleEndpoint[] = [
   { name: 'Partidas', slug: 'partidas', endpoint: 'Partidas' },
   { name: 'Jogadores', slug: 'jogadores', endpoint: 'Jogadores' },
   { name: 'Notícias', slug: 'noticias', endpoint: 'Notícias' },
-  { name: 'Outros', slug: 'other', endpoint: 'other' },
+  { name: 'Outros', slug: 'other', endpoint: 'Other' },
 ];
 
 const bySlug = new Map(articleEndpoints.map((item) => [item.slug, item]));

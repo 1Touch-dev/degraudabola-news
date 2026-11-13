@@ -1,5 +1,4 @@
 import ArticleAffiliateBody from '@/components/affiliate/ArticleAffiliateBody';
-import Image from 'next/image';
 import Link from 'next/link';
 import ArticleCard from '@/components/cards/ArticleCard';
 import ArticleKeyPoints from '@/components/article/ArticleKeyPoints';
@@ -9,6 +8,7 @@ import ArticleSentiment from '@/components/article/ArticleSentiment';
 import { siteConfig } from '@/lib/site-config';
 import { hasCapability } from '@/lib/capabilities';
 import FallbackMedia from '@/components/ui/FallbackMedia';
+import { uniqueYoutubeIds } from '@/lib/youtube';
 
 interface ArticleLayoutProps {
   article: Article;
@@ -64,20 +64,76 @@ function Byline({ article }: { article: Article }) {
   );
 }
 
+function ArticleVideos({
+  article,
+  tone = 'light',
+}: {
+  article: Article;
+  tone?: 'light' | 'dark';
+}) {
+  const ids = uniqueYoutubeIds([
+    article.videoUrl,
+    ...(article.videoUrls || []),
+  ]);
+  if (!ids.length) return null;
+  const dark = tone === 'dark';
+
+  return (
+    <section className="mt-6 space-y-4">
+      {ids.length > 1 ? (
+        <h2
+          className={`font-display text-sm uppercase tracking-[0.18em] ${
+            dark ? 'text-white/70' : 'text-secondary'
+          }`}
+        >
+          Vídeos
+        </h2>
+      ) : null}
+      <div className="space-y-4">
+        {ids.map((id) => (
+          <div
+            key={id}
+            className={`aspect-video overflow-hidden rounded-xl bg-black ${
+              dark ? 'border border-white/10' : 'border border-black/10'
+            }`}
+          >
+            <iframe
+              title={`${article.title} — YouTube`}
+              src={`https://www.youtube.com/embed/${id}`}
+              className="h-full w-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function RelatedBlock({
   related,
   variant = 'horizontal',
+  tone = 'light',
 }: {
   related: Article[];
   variant?: 'horizontal' | 'rail' | 'compact';
+  tone?: 'light' | 'dark';
 }) {
   if (!related.length) return null;
+  const dark = tone === 'dark';
   return (
-    <section className="mt-12 border-t border-black/10 pt-8">
-      <h2 className="font-display text-xl uppercase tracking-wide text-secondary">Leia também</h2>
-      <div className={variant === 'compact' ? 'mt-4 grid gap-4 sm:grid-cols-3' : 'mt-4 space-y-2'}>
+    <section className={`mt-12 border-t pt-8 ${dark ? 'border-white/10' : 'border-black/10'}`}>
+      <h2
+        className={`font-display text-xl uppercase tracking-wide ${dark ? 'text-white' : 'text-secondary'}`}
+      >
+        Leia também
+      </h2>
+      <div className={variant === 'compact' ? 'mt-4 grid gap-4 sm:grid-cols-3' : 'mt-4 space-y-3'}>
         {related.map((item) => (
-          <ArticleCard key={item.id} article={item} variant={variant} />
+          <ArticleCard key={item.id} article={item} variant={variant} tone={tone} />
         ))}
       </div>
     </section>
@@ -98,52 +154,60 @@ function MediaRichStory({ article, related }: ArticleLayoutProps) {
           fallbackClassName="absolute inset-0"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 mx-auto hidden max-w-4xl px-4 pb-8 md:block md:pb-12">
-          <MetaBadges article={article} />
-          <h1 className="mt-3 break-words font-display text-5xl uppercase leading-[0.95] tracking-wide text-white lg:text-6xl">
-            {article.title}
-          </h1>
+        <div className="absolute bottom-0 left-0 right-0 hidden pb-8 md:block md:pb-12">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="max-w-3xl">
+              <MetaBadges article={article} />
+              <h1 className="mt-3 break-words font-display text-5xl uppercase leading-[0.95] tracking-wide text-white lg:text-6xl">
+                {article.title}
+              </h1>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mx-auto min-w-0 max-w-6xl article-content-shell px-4 py-8 md:py-10">
-        {article.imageUrl ? (
-          <header className="mb-6 md:hidden">
-            <MetaBadges article={article} />
-            <h1 className="mt-3 break-words font-display text-3xl uppercase leading-tight tracking-wide">
-              {article.title}
-            </h1>
-          </header>
-        ) : null}
-        {!article.imageUrl && (
-          <header className="mb-8">
-            <Breadcrumb article={article} />
-            <MetaBadges article={article} />
-            <h1 className="mt-3 font-display text-3xl uppercase leading-none tracking-wide text-white md:text-5xl">
-              {article.title}
-            </h1>
-          </header>
-        )}
-        {article.imageUrl && (
-          <div className="mb-6 [&_a]:text-white/70 [&_a:hover]:text-accent [&_.text-muted]:text-white/55">
-            <Breadcrumb article={article} />
+      <div className="mx-auto min-w-0 max-w-6xl px-4 py-8 md:py-10">
+        <div className="max-w-3xl">
+          {article.imageUrl ? (
+            <header className="mb-6 md:hidden">
+              <MetaBadges article={article} />
+              <h1 className="mt-3 break-words font-display text-3xl uppercase leading-tight tracking-wide">
+                {article.title}
+              </h1>
+            </header>
+          ) : null}
+          {!article.imageUrl && (
+            <header className="mb-8">
+              <Breadcrumb article={article} />
+              <MetaBadges article={article} />
+              <h1 className="mt-3 font-display text-3xl uppercase leading-none tracking-wide text-white md:text-5xl">
+                {article.title}
+              </h1>
+            </header>
+          )}
+          {article.imageUrl && (
+            <div className="mb-6 [&_a]:text-white/70 [&_a:hover]:text-accent [&_.text-muted]:text-white/55">
+              <Breadcrumb article={article} />
+            </div>
+          )}
+          {article.excerpt ? (
+            <p className="break-words border-l-4 border-primary pl-4 text-base font-medium leading-relaxed text-white/85 sm:text-lg">
+              {article.excerpt}
+            </p>
+          ) : null}
+          <div className="mt-4 text-white/60 [&_.text-foreground]:text-white [&_.text-muted]:text-white/55">
+            <Byline article={article} />
           </div>
-        )}
-        {article.excerpt ? (
-          <p className="break-words border-l-4 border-primary pl-4 text-base font-medium leading-relaxed text-white/85 sm:text-lg">
-            {article.excerpt}
-          </p>
-        ) : null}
-        <div className="mt-4 text-white/60 [&_.text-foreground]:text-white [&_.text-muted]:text-white/55">
-          <Byline article={article} />
+          <KeyPointsBlock article={article} inverted />
         </div>
-        <KeyPointsBlock article={article} inverted />
         <ArticleAffiliateBody
-          className="prose prose-invert  max-w-none break-words font-body text-base leading-[1.7] prose-headings:font-display prose-headings:uppercase prose-a:text-accent prose-img:h-auto prose-img:max-w-full [&_iframe]:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
+          align="start"
+          className="prose prose-invert max-w-none break-words font-body text-base leading-[1.7] prose-headings:font-display prose-headings:uppercase prose-a:text-accent prose-img:h-auto prose-img:max-w-full [&_iframe]:max-w-full [&_.article-youtube]:my-6 [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
           html={article.content}
         />
-        <ArticleSentiment articleId={article.id} slug={article.slug} tone="dark" />
-        <div className="[&_h2]:text-white [&_h3]:text-white [&_.text-muted]:text-white/50 [&_.text-foreground]:text-white [&_.text-primary]:text-accent [&_.border-black\/10]:border-white/10">
-          <RelatedBlock related={related} variant="horizontal" />
+        <div className="max-w-3xl">
+          <ArticleVideos article={article} tone="dark" />
+          <ArticleSentiment articleId={article.id} slug={article.slug} tone="dark" />
+          <RelatedBlock related={related} variant="horizontal" tone="dark" />
         </div>
       </div>
     </article>
@@ -186,6 +250,7 @@ function LongformFocused({ article, related }: ArticleLayoutProps) {
           className="prose prose-lg prose-neutral  max-w-none font-article leading-[1.85] prose-headings:font-display prose-headings:tracking-[-0.01em] prose-p:text-secondary/90 prose-a:text-primary"
           html={article.content}
         />
+        <ArticleVideos article={article} />
         <ArticleSentiment articleId={article.id} slug={article.slug} />
         <RelatedBlock related={related} variant="compact" />
       </div>
@@ -222,6 +287,7 @@ function SplitRailStory({ article, related }: ArticleLayoutProps) {
           className="prose prose-neutral  max-w-none font-article leading-relaxed"
           html={article.content}
         />
+          <ArticleVideos article={article} />
           <ArticleSentiment articleId={article.id} slug={article.slug} />
         </article>
 
@@ -260,6 +326,7 @@ function InterviewFocus({ article, related }: ArticleLayoutProps) {
             className="prose prose-neutral mt-10 max-w-none font-article"
             html={article.content}
           />
+          <ArticleVideos article={article} />
           <ArticleSentiment articleId={article.id} slug={article.slug} />
         </div>
         <aside className="space-y-4">
@@ -307,6 +374,7 @@ function GalleryLead({ article, related }: ArticleLayoutProps) {
           className="prose prose-lg max-w-none"
           html={article.content}
         />
+        <ArticleVideos article={article} />
         <ArticleSentiment articleId={article.id} slug={article.slug} />
         <RelatedBlock related={related} variant="compact" />
       </div>
@@ -325,6 +393,7 @@ function OpinionColumn({ article, related }: ArticleLayoutProps) {
         className="prose prose-lg mt-10 max-w-none font-body"
         html={article.content}
       />
+      <ArticleVideos article={article} />
       <ArticleSentiment articleId={article.id} slug={article.slug} />
       <RelatedBlock related={related} variant="horizontal" />
     </article>

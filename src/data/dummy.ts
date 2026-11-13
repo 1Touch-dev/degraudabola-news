@@ -23,6 +23,8 @@ export interface Article {
   publishedAt: string;
   imageUrl?: string;
   isVideo?: boolean;
+  videoUrl?: string;
+  videoUrls?: string[];
   readCount?: number;
   featured?: boolean;
   keyPoints?: string[];
