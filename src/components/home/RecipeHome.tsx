@@ -505,17 +505,15 @@ function HorizontalStream({ articles }: { articles: Article[] }) {
           Arquivo
         </Link>
       </div>
-      <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-3">
-          {articles.slice(0, 3).map((article) => (
-            <ArticleCard key={article.id} article={article} variant="horizontal" />
-          ))}
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1">
-          {articles.slice(3, 6).map((article) => (
-            <ArticleCard key={article.id} article={article} variant="compact" />
-          ))}
-        </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {articles.slice(0, 6).map((article) => (
+          <ArticleCard
+            key={article.id}
+            article={article}
+            variant="horizontal"
+            className="h-full"
+          />
+        ))}
       </div>
     </section>
   );
